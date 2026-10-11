@@ -22,6 +22,7 @@ jobs:
         run: |
           mkdir -p public
           unzip -q VFIT_PRO_PREMIUM_V14.zip -d public
+          cp -R overrides/. public/
           test -f public/index.html
           touch public/.nojekyll
       - uses: actions/configure-pages@v5
