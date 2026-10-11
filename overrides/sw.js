@@ -1,4 +1,29 @@
-const CACHE='vfit-pro-v18';const ASSETS=["./", "./index.html","./assets/home-hero-v15.jpg", "./manifest.webmanifest", "./icon-premium-192.png", "./icon-premium-512.png", "./sw.js", "./assets/anatomy/d1_aperturas-en-polea.jpg", "./assets/anatomy/d1_extension-de-triceps-en-polea.jpg", "./assets/anatomy/d1_extension-de-triceps-sobre-la-cabeza.jpg", "./assets/anatomy/d1_press-de-banca.jpg", "./assets/anatomy/d1_press-frances.jpg", "./assets/anatomy/d1_press-inclinado-con-mancuernas.jpg", "./assets/anatomy/d2_curl-con-barra-recta.jpg", "./assets/anatomy/d2_curl-con-mancuernas.jpg", "./assets/anatomy/d2_curl-scott.jpg", "./assets/anatomy/d2_jalon-al-pecho.jpg", "./assets/anatomy/d2_remo-curvado.jpg", "./assets/anatomy/d2_remo-en-polea.jpg", "./assets/anatomy/d3_abduccion-de-cadera.jpg", "./assets/anatomy/d3_curl-femoral.jpg", "./assets/anatomy/d3_extension-de-cuadriceps.jpg", "./assets/anatomy/d3_flexion-de-cadera.jpg", "./assets/anatomy/d3_prensa-de-piernas.jpg", "./assets/anatomy/d3_sentadilla-hack.jpg", "./assets/anatomy/d4_crucifijo-invertido.jpg", "./assets/anatomy/d4_desarrollo-de-hombro.jpg", "./assets/anatomy/d4_elevacion-frontal.jpg", "./assets/anatomy/d4_elevacion-lateral.jpg", "./assets/anatomy/d5_curl-con-barra-recta.jpg", "./assets/anatomy/d5_curl-con-mancuernas.jpg", "./assets/anatomy/d5_curl-en-banco-scott.jpg", "./assets/anatomy/d5_extension-de-triceps-al-frente.jpg", "./assets/anatomy/d5_extension-de-triceps-en-polea.jpg", "./assets/anatomy/d5_extension-de-triceps-sobre-la-cabeza.jpg", "./assets/day/day1.jpg", "./assets/day/day2.jpg", "./assets/day/day3.jpg", "./assets/day/day4.jpg", "./assets/day/day5.jpg", "./assets/exercise/d1_aperturas-en-polea.jpg", "./assets/exercise/d1_extension-de-triceps-en-polea.jpg", "./assets/exercise/d1_extension-de-triceps-sobre-la-cabeza.jpg", "./assets/exercise/d1_press-de-banca.jpg", "./assets/exercise/d1_press-frances.jpg", "./assets/exercise/d1_press-inclinado-con-mancuernas.jpg", "./assets/exercise/d2_curl-con-barra-recta.jpg", "./assets/exercise/d2_curl-con-mancuernas.jpg", "./assets/exercise/d2_curl-scott.jpg", "./assets/exercise/d2_jalon-al-pecho.jpg", "./assets/exercise/d2_remo-curvado.jpg", "./assets/exercise/d2_remo-en-polea.jpg", "./assets/exercise/d3_abduccion-de-cadera.jpg", "./assets/exercise/d3_curl-femoral.jpg", "./assets/exercise/d3_extension-de-cuadriceps.jpg", "./assets/exercise/d3_flexion-de-cadera.jpg", "./assets/exercise/d3_prensa-de-piernas.jpg", "./assets/exercise/d3_sentadilla-hack.jpg", "./assets/exercise/d4_crucifijo-invertido.jpg", "./assets/exercise/d4_desarrollo-de-hombro.jpg", "./assets/exercise/d4_elevacion-frontal.jpg", "./assets/exercise/d4_elevacion-lateral.jpg", "./assets/exercise/d5_curl-con-barra-recta.jpg", "./assets/exercise/d5_curl-con-mancuernas.jpg", "./assets/exercise/d5_curl-en-banco-scott.jpg", "./assets/exercise/d5_extension-de-triceps-al-frente.jpg", "./assets/exercise/d5_extension-de-triceps-en-polea.jpg", "./assets/exercise/d5_extension-de-triceps-sobre-la-cabeza.jpg", "./assets/thumb/d1_aperturas-en-polea.jpg", "./assets/thumb/d1_extension-de-triceps-en-polea.jpg", "./assets/thumb/d1_extension-de-triceps-sobre-la-cabeza.jpg", "./assets/thumb/d1_press-de-banca.jpg", "./assets/thumb/d1_press-frances.jpg", "./assets/thumb/d1_press-inclinado-con-mancuernas.jpg", "./assets/thumb/d2_curl-con-barra-recta.jpg", "./assets/thumb/d2_curl-con-mancuernas.jpg", "./assets/thumb/d2_curl-scott.jpg", "./assets/thumb/d2_jalon-al-pecho.jpg", "./assets/thumb/d2_remo-curvado.jpg", "./assets/thumb/d2_remo-en-polea.jpg", "./assets/thumb/d3_abduccion-de-cadera.jpg", "./assets/thumb/d3_curl-femoral.jpg", "./assets/thumb/d3_extension-de-cuadriceps.jpg", "./assets/thumb/d3_flexion-de-cadera.jpg", "./assets/thumb/d3_prensa-de-piernas.jpg", "./assets/thumb/d3_sentadilla-hack.jpg", "./assets/thumb/d4_crucifijo-invertido.jpg", "./assets/thumb/d4_desarrollo-de-hombro.jpg", "./assets/thumb/d4_elevacion-frontal.jpg", "./assets/thumb/d4_elevacion-lateral.jpg", "./assets/thumb/d5_curl-con-barra-recta.jpg", "./assets/thumb/d5_curl-con-mancuernas.jpg", "./assets/thumb/d5_curl-en-banco-scott.jpg", "./assets/thumb/d5_extension-de-triceps-al-frente.jpg", "./assets/thumb/d5_extension-de-triceps-en-polea.jpg", "./assets/thumb/d5_extension-de-triceps-sobre-la-cabeza.jpg"];
-self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting())));
-self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const k of await caches.keys())if(k.startsWith('vfit-pro-')&&k!==CACHE)await caches.delete(k);await self.clients.claim();for(const client of await self.clients.matchAll({type:'window'}))await client.navigate(client.url)})()));
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;if(e.request.mode==='navigate'){e.respondWith(fetch(e.request,{cache:'no-store'}).then(async r=>{if(r.ok){const c=await caches.open(CACHE);await c.put('./index.html',r.clone())}return r}).catch(()=>caches.match('./index.html')));return}e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)))});
+const CACHE = 'vfit-pro-v19';
+const ASSETS = ['./', './index.html', './accounts.css?v=19', './accounts.js?v=19',
+  './vendor/supabase-2.57.4.js', './assets/home-hero-v15.jpg',
+  './manifest.webmanifest', './icon-premium-192.png', './icon-premium-512.png'];
+self.addEventListener('install', event => event.waitUntil(
+  caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+));
+self.addEventListener('activate', event => event.waitUntil((async () => {
+  for (const key of await caches.keys()) {
+    if (key.startsWith('vfit-pro-') && key !== CACHE) await caches.delete(key);
+  }
+  await self.clients.claim();
+  // Do not reload an active workout or interrupt pending user changes.
+})()));
+self.addEventListener('fetch', event => {
+  // Never cache auth tokens, Supabase responses or other external requests.
+  if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return;
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request, {cache:'no-store'}).then(async response => {
+      if (response.ok) await (await caches.open(CACHE)).put('./index.html', response.clone());
+      return response;
+    }).catch(() => caches.match('./index.html')));
+    return;
+  }
+  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request).then(async response => {
+    if (response.ok) await (await caches.open(CACHE)).put(event.request, response.clone());
+    return response;
+  })));
+});

@@ -1,0 +1,24 @@
+/* Account gate: the app is hidden until a specific user's data has loaded. */
+body:not(.account-ready) .app{display:none}
+.accountGate{max-width:480px;margin:40px auto;padding:24px 20px}
+.accountGate[hidden]{display:none}
+.accountGate h1{font-size:36px;letter-spacing:-1.5px;margin:0 0 8px}
+.accountGate h1 span{color:var(--orange)}
+.accountGate p,.accountInfo{color:#b5c3d1;font-size:13px;line-height:1.6}
+.accountCard{margin-top:24px;background:#0a121b;border:1px solid var(--line2);border-radius:24px;padding:20px}
+.accountTabs{display:flex;gap:8px;margin-bottom:20px}
+.accountTabs button{flex:1;padding:12px;border-radius:12px;color:white;background:#142231;border:1px solid var(--line2)}
+.accountTabs button[aria-selected=true]{border-color:var(--orange);color:var(--orange)}
+.accountCard label{display:block;font-size:13px;margin:14px 0 7px}
+.accountCard input{width:100%;padding:14px;background:#111c28;color:white;border:1px solid var(--line2);border-radius:12px;font-size:16px}
+.accountCard .cta{width:100%;margin:20px 0 0}
+.accountCard button:disabled{opacity:.5}
+.accountMessage{min-height:22px;color:#ffbd79!important;overflow-wrap:anywhere}
+.accountName{overflow-wrap:anywhere}
+.accountStatus{font-size:12px;margin:10px 0;color:#b5c3d1}
+.accountStatus[data-state=error]{color:#ffbd79}
+.accountActions{display:grid;gap:8px;margin-top:12px}
+.accountActions button{background:#142231;border:1px solid var(--line2);border-radius:12px;padding:12px;color:white;text-align:left}
+.accountActions button:disabled{opacity:.5}
+.accountActions [hidden]{display:none}
+.accountRecovery{background:none;border:0;color:#b5c3d1;text-decoration:underline;padding:14px 0;font-size:12px}
