@@ -1,4 +1,4 @@
-const CACHE = 'vfit-pro-v19';
+const CACHE = 'vfit-pro-v20';
 const ASSETS = ['./', './index.html', './accounts.css?v=19', './accounts.js?v=19',
   './vendor/supabase-2.57.4.js', './assets/home-hero-v15.jpg',
   './manifest.webmanifest', './icon-premium-192.png', './icon-premium-512.png'];
