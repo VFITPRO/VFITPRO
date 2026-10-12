@@ -54,14 +54,14 @@
   oldBlock.querySelector('h3').textContent = 'Guardado privado por cuenta';
   oldBlock.querySelector('p').textContent = 'Tu progreso se guarda en Supabase y en una copia local de esta cuenta. Si no hay conexión, verás cuándo quedan cambios pendientes. No entrenes simultáneamente en varios dispositivos; si hay versiones distintas, podrás elegir cuál conservar.';
   const versionBlock = $('profile').lastElementChild;
-  versionBlock.querySelector('h3').textContent = 'Versión Premium V22 · Sesiones adaptadas';
+  versionBlock.querySelector('h3').textContent = 'Versión Premium V23';
   const el = id => document.getElementById(id);
   const cacheKey = id => 'vfit-account-data:' + id;
   function store(key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); return true; }
     catch { status('No se pudo guardar la copia local. Mantén la conexión y no cierres la app hasta sincronizar.', true); return false; }
   }
-  function snapshot() { return clone({schemaVersion:2, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }
+  function snapshot() { return clone({schemaVersion:3, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }
   function cache() { if (uid) store(cacheKey(uid), {data:snapshot(), dirty, stamp}); }
   function status(message, error = false) {
     el('cloudStatus').textContent = message;
@@ -83,7 +83,9 @@
     favorites = Array.isArray(data.favorites) ? data.favorites.filter(k=>typeof k === 'string' && /^\d+:\d+$/.test(k) && routines[k.split(':')[0]]?.ex[k.split(':')[1]]) : [];
     const w = data.currentWorkout;
     currentWorkout = safeWorkout(w);
-    profile = data.profile && typeof data.profile === 'object' ? {name:String(data.profile.name || '').slice(0,60)} : {};
+    const rawProfile = data.profile && typeof data.profile === 'object' ? data.profile : {};
+    profile = {name:String(rawProfile.name || '').slice(0,60)};
+    if (rawProfile.v23 && typeof rawProfile.v23 === 'object') profile.v23 = clone(rawProfile.v23);
     activeDay = activeEx = 0;
     if (timerInt) {clearInterval(timerInt); timerInt = null;}
     restDeadline=null;restDuration=90;renderWorkoutClock();
@@ -274,4 +276,16 @@
   window.addEventListener('pagehide',()=>{if (ready) cache();});
   document.addEventListener('visibilitychange',()=>{if (document.visibilityState === 'visible' && ready) sync();else if (ready) cache();});
   client.auth.getSession().then(({data,error})=>{if(error)showGate('No se pudo recuperar la sesión. Vuelve a entrar.');else loadSession(data.session);});
+  window.VFITAccountBridge = Object.freeze({
+    getProfile: () => profile,
+    getUid: () => uid,
+    snapshot: () => clone(snapshot()),
+    markDirty: () => writeSaved('vfit-v23', Date.now()),
+    restore: data => {
+      if (!uid || !ready || !data || typeof data !== 'object') return false;
+      store(cacheKey(uid)+':before-v23-restore', snapshot());
+      resetData(clone(data)); dirty = true; revision++; cache();
+      status('Copia restaurada · pendiente de sincronizar'); sync(); return true;
+    }
+  });
 })();
