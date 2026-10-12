@@ -52,12 +52,13 @@ const logout=async()=>{window.eval("show('profile')");el('signOutAccount').click
 (async()=>{
   boot({'vfit12-progress':JSON.stringify({sessions:9,volume:1234,records:{},history:[]})});
   await wait(()=>el('accountMessage')?.textContent.includes('Entra o crea'));assert(!ready());checks.push('Inicio de sesión obligatorio; ningún progreso visible antes de entrar');
-  await login('a@example.com');assert.equal(el('homeSessions').textContent,'0');checks.push('No se importa el progreso antiguo a una cuenta arbitraria');
+  await login('a@example.com');assert.equal(el('homeSessions').textContent,'0');checks.push('No se importa el progreso antiguo a una cuenta arbitraria');assert(window.eval('state.flat(2).every(s=>s.kg===0)'));
   assert.equal(doc.querySelectorAll('#homeDays .dayCard').length,5);assert.equal(doc.querySelectorAll('#routineDays .dayCard').length,5);
   const assets=window.eval('routines.flatMap(r=>[r.hero,...r.ex.flatMap(e=>[e.image,e.thumb,e.anatomy])])');assets.forEach(asset=>assert(fs.existsSync(path.join(build,asset)),asset));
   for(let i=0;i<5;i++){
+    window.eval('currentWorkout=null');
     click('.bottomNav [data-s=routines]');doc.querySelectorAll('#routineDays .dayCard')[i].click();assert.equal(el('dayTitle').textContent,'Día '+(i+1));
-    click('#exerciseList .exerciseCard');click('#exercise .cta');assert.equal(doc.querySelectorAll('#setRows .setRow').length,5);
+    click('#exerciseList .exerciseCard');click('#exercise .cta');assert.equal(doc.querySelectorAll('#setRows .setRow').length,3);
     assert(doc.querySelector('#register').classList.contains('active'));
   }
   checks.push('Los cinco días, todos sus assets, ejercicios y botones de registro funcionan');
@@ -65,12 +66,36 @@ const logout=async()=>{window.eval("show('profile')");el('signOutAccount').click
   await wait(()=>el('cloudStatus').textContent.startsWith('Sincronizado'));
   assert.equal(cloud.get(users.get('a@example.com')).data.progress.sessions,1);assert.equal(cloud.get(users.get('a@example.com')).data.progress.volume,420);
   checks.push('La cuenta A guarda sesión, cargas, volumen y notas');
+  assert.equal(cloud.get(users.get('a@example.com')).data.progress.history[0].exercises[0].sets[0].kg,42);
+  window.eval("openDay(4);openRoutineEditor()");
+  const originalFirst=window.eval('routines[4].ex[0].image');
+  const beforeCount=window.eval('routines[4].ex.length');
+  Array.from(doc.querySelectorAll('#editorOverlay button')).find(b=>b.textContent==='+ Añadir ejercicio').click();assert.equal(window.eval('routines[4].ex.length'),beforeCount+1);
+  Array.from(doc.querySelectorAll('#editorOverlay button')).filter(b=>b.textContent==='Quitar ejercicio').at(-1).click();assert.equal(window.eval('routines[4].ex.length'),beforeCount);
+  window.eval('moveExercise(0,1)');assert.equal(window.eval('routines[4].ex[1].image'),originalFirst);assert.equal(window.eval('state[4][1][0].kg'),42);
+  doc.querySelector('#editorOverlay input[type=number]').value='4';doc.querySelector('#editorOverlay input[type=number]').dispatchEvent(new window.Event('change'));
+  assert.equal(window.eval('state[4][0].length'),4);
+  window.eval("$('editorOverlay').remove();openExercise(1);openRegister();currentWorkout.runningSince=Date.now()-65000;renderWorkoutClock()");
+  assert.equal(el('workoutElapsed').textContent,'01:05');window.eval('toggleWorkoutClock();adjustWorkoutClock(-60)');assert.equal(el('workoutElapsed').textContent,'00:05');
+  window.eval('changeSetCount(1)');assert.equal(window.eval('state[4][1].length'),4);window.eval('changeSetCount(-1)');assert.equal(window.eval('state[4][1].length'),3);
+  el('notes').value='Nota persistente';el('notes').dispatchEvent(new window.Event('input'));
+  await wait(()=>el('cloudStatus').textContent.startsWith('Sincronizado'));
+  assert.equal(cloud.get(users.get('a@example.com')).data.currentWorkout.elapsed,5);
+  assert.equal(cloud.get(users.get('a@example.com')).data.program[4][1].key,originalFirst);
+  checks.push('Rutinas reordenadas conservan cargas; series editables, reloj separado y notas guardadas');
+
   await logout();assert.equal(el('notes').value,'');assert.equal(el('setRows').children.length,0);
   el('signupTab').click();el('accountName').value='Cuenta B';el('accountEmail').value='b@example.com';el('accountPassword').value='test-password';
   el('accountForm').dispatchEvent(new window.Event('submit',{cancelable:true}));await wait(ready);
   assert.equal(el('homeSessions').textContent,'0');assert.equal(window.eval('state[4][0][0].note'),'');assert.equal(window.eval('favorites.length'),0);
   checks.push('Registro y cambio a B no mezclan sesiones, cargas, notas ni favoritos');
   await logout();await login('a@example.com');assert.equal(el('homeSessions').textContent,'1');
+  assert.equal(window.eval('routines[4].ex[1].image'),originalFirst);assert.equal(window.eval('state[4][0].length'),4);
+  assert.equal(window.eval('currentWorkout.elapsed'),5);assert.equal(window.eval('state[4][1][0].note'),'Nota persistente');
+  assert.equal(window.eval('progress.history[0].exercises[0].sets[0].kg'),42);
+  window.eval('openSessionDetail(progress.history[0])');assert(el('editorOverlay').textContent.includes('42 kg'));
+  checks.push('Programa personalizado, tiempo de sesión e historial detallado sobreviven al cambio de cuenta');
+
   const saved={};for(let i=0;i<window.localStorage.length;i++){const k=window.localStorage.key(i);saved[k]=window.localStorage.getItem(k);}dom.window.close();boot(saved);await wait(ready);
   assert.equal(el('homeSessions').textContent,'1');checks.push('Entrar de nuevo y recargar recuperan la cuenta y el progreso');
   failCloud=true;window.eval('progress.sessions=2;persist()');await wait(()=>el('cloudStatus').dataset.state==='error');

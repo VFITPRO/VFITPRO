@@ -54,14 +54,14 @@
   oldBlock.querySelector('h3').textContent = 'Guardado privado por cuenta';
   oldBlock.querySelector('p').textContent = 'Tu progreso se guarda en Supabase y en una copia local de esta cuenta. Si no hay conexión, verás cuándo quedan cambios pendientes. No entrenes simultáneamente en varios dispositivos; si hay versiones distintas, podrás elegir cuál conservar.';
   const versionBlock = $('profile').lastElementChild;
-  versionBlock.querySelector('h3').textContent = 'Versión Premium V19 · Cuentas';
+  versionBlock.querySelector('h3').textContent = 'Versión Premium V21 · Entrenamiento';
   const el = id => document.getElementById(id);
   const cacheKey = id => 'vfit-account-data:' + id;
   function store(key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); return true; }
     catch { status('No se pudo guardar la copia local. Mantén la conexión y no cierres la app hasta sincronizar.', true); return false; }
   }
-  function snapshot() { return clone({schemaVersion:1, state, progress, favorites, currentWorkout, profile}); }
+  function snapshot() { return clone({schemaVersion:2, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }
   function cache() { if (uid) store(cacheKey(uid), {data:snapshot(), dirty, stamp}); }
   function status(message, error = false) {
     el('cloudStatus').textContent = message;
@@ -69,21 +69,24 @@
     el('useCloud').hidden = el('useLocal').hidden = !conflicted;
   }
   function resetData(data = {}) {
+    loadProgram(data.program);
+    $("editorOverlay")?.remove();
     const num = (n, fallback = 0) => Number.isFinite(Number(n)) && Number(n) >= 0 ? Number(n) : fallback;
     state = routines.map((r,i) => r.ex.map((ex,j) => {
       const saved = data.state?.[i]?.[j];
-      return Array.isArray(saved) && saved.length ? saved.slice(0,20).map(s => ({kg:num(s.kg), reps:num(s.reps), rir:num(s.rir), done:s.done === true, note:typeof s.note === 'string' ? s.note.slice(0,4000) : ''})) : clone(defaultSets[i][j]);
+      return Array.isArray(saved) && saved.length ? saved.slice(0,20).map(s => ({kg:num(s.kg), reps:num(s.reps), rir:num(s.rir), done:s.done === true, note:typeof s.note === 'string' ? s.note.slice(0,4000) : ''})) : blankSets(ex);
     }));
     const p = data.progress || {};
     progress = {streak:0, sessions:num(p.sessions), volume:num(p.volume), records:{}, history:[], nextDay:num(p.nextDay)%routines.length};
     if (p.records && typeof p.records === 'object') for (const ex of routines.flatMap(r=>r.ex)) if (p.records[ex.name] !== undefined) progress.records[ex.name] = num(p.records[ex.name]);
-    if (Array.isArray(p.history)) progress.history = p.history.slice(0,10000).filter(h=>h && typeof h === 'object').map(h=>({title:String(h.title || 'Entrenamiento').slice(0,200),date:String(h.date || '').replace(/[^0-9/]/g,''),timestamp:num(h.timestamp),volume:num(h.volume),sets:num(h.sets)}));
+    if (Array.isArray(p.history)) progress.history = p.history.slice(0,10000).filter(h=>h && typeof h === 'object').map(h=>({title:String(h.title || 'Entrenamiento').slice(0,200),date:String(h.date || '').replace(/[^0-9/]/g,''),timestamp:num(h.timestamp),volume:num(h.volume),sets:num(h.sets),...safeHistoryDetails(h)}));
     favorites = Array.isArray(data.favorites) ? data.favorites.filter(k=>typeof k === 'string' && /^\d+:\d+$/.test(k) && routines[k.split(':')[0]]?.ex[k.split(':')[1]]) : [];
     const w = data.currentWorkout;
-    currentWorkout = w && Number.isInteger(w.day) && Number.isInteger(w.exercise) && routines[w.day]?.ex[w.exercise] ? {day:w.day, exercise:w.exercise} : null;
+    currentWorkout = safeWorkout(w);
     profile = data.profile && typeof data.profile === 'object' ? {name:String(data.profile.name || '').slice(0,60)} : {};
     activeDay = activeEx = 0;
     if (timerInt) {clearInterval(timerInt); timerInt = null;}
+    restDeadline=null;restDuration=90;renderWorkoutClock();
     rest = 90; $('timer').textContent = fmt(rest); $('timerToggle').textContent = '▶';
     $('notes').value = ''; $('setRows').innerHTML = ''; $('exerciseList').innerHTML = '';
     closeDayOptions(); renderDays(); renderProgress(); updateResume(); renderFavorites();
