@@ -54,7 +54,7 @@
   oldBlock.querySelector('h3').textContent = 'Guardado privado por cuenta';
   oldBlock.querySelector('p').textContent = 'Tu progreso se guarda en Supabase y en una copia local de esta cuenta. Si no hay conexión, verás cuándo quedan cambios pendientes. No entrenes simultáneamente en varios dispositivos; si hay versiones distintas, podrás elegir cuál conservar.';
   const versionBlock = $('profile').lastElementChild;
-  versionBlock.querySelector('h3').textContent = 'Versión Premium V21 · Entrenamiento';
+  versionBlock.querySelector('h3').textContent = 'Versión Premium V22 · Sesiones adaptadas';
   const el = id => document.getElementById(id);
   const cacheKey = id => 'vfit-account-data:' + id;
   function store(key, value) {
