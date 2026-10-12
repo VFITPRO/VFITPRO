@@ -1,0 +1,75 @@
+name: Apply V23 integration patch
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/v23-patch.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Integrate V23 safely
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              text = p.read_text()
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{path}: expected one match, found {count}: {old[:80]!r}')
+              p.write_text(text.replace(old, new, 1))
+
+          accounts = 'overrides/accounts.js'
+          replace_once(accounts,
+              "function snapshot() { return clone({schemaVersion:2, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }",
+              "function snapshot() { return clone({schemaVersion:3, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }")
+          replace_once(accounts,
+              "    profile = data.profile && typeof data.profile === 'object' ? {name:String(data.profile.name || '').slice(0,60)} : {};",
+              "    const rawProfile = data.profile && typeof data.profile === 'object' ? data.profile : {};\n    profile = {name:String(rawProfile.name || '').slice(0,60)};\n    if (rawProfile.v23 && typeof rawProfile.v23 === 'object') profile.v23 = clone(rawProfile.v23);")
+          replace_once(accounts,
+              "  versionBlock.querySelector('h3').textContent = 'Versión Premium V22 · Sesiones adaptadas';",
+              "  versionBlock.querySelector('h3').textContent = 'Versión Premium V23';")
+          replace_once(accounts,
+              "  client.auth.getSession().then(({data,error})=>{if(error)showGate('No se pudo recuperar la sesión. Vuelve a entrar.');else loadSession(data.session);});\n})();",
+              "  client.auth.getSession().then(({data,error})=>{if(error)showGate('No se pudo recuperar la sesión. Vuelve a entrar.');else loadSession(data.session);});\n  window.VFITAccountBridge = Object.freeze({\n    getProfile: () => profile,\n    getUid: () => uid,\n    snapshot: () => clone(snapshot()),\n    markDirty: () => writeSaved('vfit-v23', Date.now()),\n    restore: data => {\n      if (!uid || !ready || !data || typeof data !== 'object') return false;\n      store(cacheKey(uid)+':before-v23-restore', snapshot());\n      resetData(clone(data)); dirty = true; revision++; cache();\n      status('Copia restaurada · pendiente de sincronizar'); sync(); return true;\n    }\n  });\n})();")
+
+          index = Path('overrides/index.html')
+          text = index.read_text()
+          for old,new in [('accounts.css?v=22','accounts.css?v=23'),('accounts.js?v=22','accounts.js?v=23')]:
+              if text.count(old) != 1:
+                  raise SystemExit(f'index: expected one {old}')
+              text = text.replace(old,new,1)
+          marker = '<script src="accounts.js?v=23"></script>'
+          if '<script src="v23.js?v=23"></script>' not in text:
+              if marker not in text: raise SystemExit('index: accounts marker missing')
+              text = text.replace(marker, marker+'\n<script src="v23.js?v=23"></script>', 1)
+          index.write_text(text)
+
+          sw = Path('overrides/sw.js')
+          text = sw.read_text()
+          text = text.replace("const CACHE = 'vfit-pro-v22';", "const CACHE = 'vfit-pro-v23';")
+          text = text.replace("'./accounts.css?v=22', './accounts.js?v=22',", "'./accounts.css?v=23', './accounts.js?v=23', './v23.js?v=23',")
+          if "vfit-pro-v23" not in text or "v23.js?v=23" not in text:
+              raise SystemExit('service worker V23 patch failed')
+          sw.write_text(text)
+          PY
+      - name: Validate JavaScript
+        run: |
+          node --check overrides/accounts.js
+          node --check overrides/v23.js
+          node --check overrides/sw.js
+          grep -q 'v23.js?v=23' overrides/index.html
+          grep -q 'VFITAccountBridge' overrides/accounts.js
+      - name: Commit integrated V23
+        run: |
+          git config user.name 'VFIT PRO Builder'
+          git config user.email 'actions@users.noreply.github.com'
+          git add overrides/index.html overrides/accounts.js overrides/sw.js
+          git commit -m 'Integrate V23 account data and UI layer'
+          git push
