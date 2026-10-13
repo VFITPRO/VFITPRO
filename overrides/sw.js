@@ -1,5 +1,5 @@
-const CACHE = 'vfit-pro-v37';
-const ASSETS = ['./', './index.html', './accounts.css?v=23', './accounts.js?v=32', './v23.js?v=23', './v24.js?v=24', './v25.js?v=25', './v26.js?v=26', './v27.js?v=27', './v28.js?v=28', './v29.js?v=29', './v30.js?v=30', './v31.js?v=31', './v32.js?v=32', './v33.js?v=33', './v34.js?v=34', './v35.js?v=35', './v36.js?v=36', './v37.js?v=37', './assets/custom-exercise.svg',
+const CACHE = 'vfit-pro-v38';
+const ASSETS = ['./', './index.html', './accounts.css?v=23', './accounts.js?v=32', './v23.js?v=23', './v24.js?v=24', './v25.js?v=25', './v26.js?v=26', './v27.js?v=27', './v28.js?v=28', './v29.js?v=29', './v30.js?v=30', './v31.js?v=31', './v32.js?v=32', './v33.js?v=33', './v34.js?v=34', './v35.js?v=35', './v36.js?v=36', './v37.js?v=37', './v38.js?v=38', './assets/custom-exercise.svg',
   './vendor/supabase-2.57.4.js', './assets/home-hero-v15.jpg',
   './manifest.webmanifest', './icon-premium-192.png', './icon-premium-512.png'];
 self.addEventListener('install', event => event.waitUntil(
