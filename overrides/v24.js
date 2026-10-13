@@ -133,7 +133,7 @@
     const compare=create('div','v24Compare');
     if(previous) compare.textContent=`Última vs. anterior: ${signed(latest.m.maxKg-previous.m.maxKg,' kg')} en carga máxima · ${signed(latest.m.e1rm-previous.m.e1rm,' kg')} en 1RM estimado · ${signed(latest.m.volume-previous.m.volume,' kg')} en volumen.`;
     else compare.textContent='Este es tu primer registro detallado de este ejercicio.';host.appendChild(compare);
-    const explanation=create('p','','1RM estimado usa la fórmula de Epley (peso × 1 + reps/30). Es una referencia de tendencia, no un levantamiento máximo medido.');explanation.style.cssText='color:var(--muted);font-size:11px;line-height:1.45';host.appendChild(explanation);
+    const explanation=create('p','','1RM estimado usa la fórmula de Epley: peso × (1 + reps/30). Es una referencia de tendencia, no un levantamiento máximo medido.');explanation.style.cssText='color:var(--muted);font-size:11px;line-height:1.45';host.appendChild(explanation);
     const trend=create('div','v24Trend');trend.setAttribute('aria-label','Tendencia de '+metricLabel(selectedMetric));const points=list.slice(0,8).reverse(),max=Math.max(1,...points.map(x=>metricValue(x,selectedMetric)));
     for(const point of points){const col=create('div','v24TrendCol'),bar=create('div','v24TrendBar');bar.style.height=Math.max(4,Math.round(metricValue(point,selectedMetric)/max*96))+'px';bar.title=metricLabel(selectedMetric)+': '+n(metricValue(point,selectedMetric));const label=create('small','',point.date?point.date.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}):'—');col.append(bar,label);trend.appendChild(col);}host.appendChild(trend);
   }
