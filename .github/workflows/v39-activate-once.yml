@@ -42,3 +42,4 @@ jobs:
             git commit -m 'Activate V39 session map after QA'
             git push
           fi
+# retry after immediate session-map refresh fix
