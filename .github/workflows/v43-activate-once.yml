@@ -42,3 +42,4 @@ jobs:
             git commit -m 'Activate V43 private program sharing after QA'
             git push
           fi
+# retry after initializing optional V42 goal state in privacy test
