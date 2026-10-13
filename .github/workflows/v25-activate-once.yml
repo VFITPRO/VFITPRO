@@ -1,0 +1,82 @@
+name: V25 Activation QA
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v25-activate-once.yml'
+permissions:
+  contents: write
+jobs:
+  activate-test-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install test runtime
+        run: npm install --no-save --package-lock=false jsdom@26.1.0
+      - name: Activate V25 and account persistence
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('overrides/accounts.js');s=p.read_text()
+          if 'schemaVersion:3' not in s: raise SystemExit('account schema target not found')
+          s=s.replace('schemaVersion:3','schemaVersion:4',1)
+          old="if (rawProfile.v23 && typeof rawProfile.v23 === 'object') profile.v23 = clone(rawProfile.v23);"
+          new="if (rawProfile.v23 && typeof rawProfile.v23 === 'object') profile.v23 = clone(rawProfile.v23);\n    if (rawProfile.v25 && typeof rawProfile.v25 === 'object') profile.v25 = clone(rawProfile.v25);"
+          if old not in s: raise SystemExit('profile V25 target not found')
+          p.write_text(s.replace(old,new,1))
+
+          p=Path('overrides/index.html');s=p.read_text()
+          if '<script src="accounts.js?v=23"></script>' not in s: raise SystemExit('accounts version target not found')
+          s=s.replace('<script src="accounts.js?v=23"></script>','<script src="accounts.js?v=25"></script>',1)
+          old='<script src="v24.js?v=24"></script>\n<noscript>'
+          new='<script src="v24.js?v=24"></script>\n<script src="v25.js?v=25"></script>\n<noscript>'
+          if old not in s: raise SystemExit('index V25 target not found')
+          p.write_text(s.replace(old,new,1))
+
+          p=Path('overrides/sw.js');s=p.read_text()
+          if "const CACHE = 'vfit-pro-v24';" not in s: raise SystemExit('cache version target not found')
+          s=s.replace("const CACHE = 'vfit-pro-v24';","const CACHE = 'vfit-pro-v25';",1)
+          old="'./accounts.css?v=23', './accounts.js?v=23', './v23.js?v=23', './v24.js?v=24',"
+          new="'./accounts.css?v=23', './accounts.js?v=25', './v23.js?v=23', './v24.js?v=24', './v25.js?v=25',"
+          if old not in s: raise SystemExit('service worker V25 target not found')
+          p.write_text(s.replace(old,new,1))
+          PY
+      - name: Run account regression suite
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: node scripts/test-accounts.cjs
+      - name: Run adaptive regression suite
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: node scripts/test-adaptive.cjs
+      - name: Run V23 regression suite
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: node scripts/test-v23.cjs
+      - name: Run V24 regression suite
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: node scripts/test-v24.cjs
+      - name: Run V25 suite
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: node scripts/test-v25.cjs
+      - name: Verify activation files
+        run: |
+          grep -q 'accounts.js?v=25' overrides/index.html
+          grep -q 'v25.js?v=25' overrides/index.html
+          grep -q "vfit-pro-v25" overrides/sw.js
+          grep -q "./v25.js?v=25" overrides/sw.js
+          grep -q 'schemaVersion:4' overrides/accounts.js
+      - name: Commit verified V25 activation
+        run: |
+          git config user.name 'VFIT QA'
+          git config user.email 'actions@users.noreply.github.com'
+          git add overrides/accounts.js overrides/index.html overrides/sw.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'Activate V25 smart training UX after QA'
+            git push
+          fi
