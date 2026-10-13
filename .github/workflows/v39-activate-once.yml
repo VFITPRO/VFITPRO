@@ -43,3 +43,4 @@ jobs:
             git push
           fi
 # retry after immediate session-map refresh fix
+# retry after current-row accessibility assertion fix
