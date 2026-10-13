@@ -90,6 +90,7 @@
     if (rawProfile.v26 && typeof rawProfile.v26 === 'object') profile.v26 = clone(rawProfile.v26);
     if (rawProfile.v27 && typeof rawProfile.v27 === 'object') profile.v27 = clone(rawProfile.v27);
     if (rawProfile.v28 && typeof rawProfile.v28 === 'object') profile.v28 = clone(rawProfile.v28);
+    if (rawProfile.v40 && typeof rawProfile.v40 === 'object') profile.v40 = clone(rawProfile.v40);
     activeDay = activeEx = 0;
     if (timerInt) {clearInterval(timerInt); timerInt = null;}
     restDeadline=null;restDuration=90;renderWorkoutClock();
