@@ -1,0 +1,32 @@
+/* VFIT PRO V39: session map, direct exercise jumps and screen wake lock while training. */
+(() => {
+  'use strict';
+  const $id=id=>document.getElementById(id),create=(tag,cls='',text='')=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=='')e.textContent=text;return e;};
+  let wakeLock=null,wakeRequesting=false;
+
+  function injectStyles(){if($id('v39Styles'))return;const s=create('style');s.id='v39Styles';s.textContent=`
+    .v39Map{margin:0 14px 12px;border:1px solid #31506b;background:linear-gradient(180deg,#0b1621,#071018);border-radius:20px;padding:12px}.v39Map[hidden]{display:none}.v39MapTop{display:flex;align-items:center;gap:8px;margin-bottom:8px}.v39MapTop h2{font-size:17px;margin:0}.v39Wake{margin-left:auto;font-size:9px;font-weight:900;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:4px 7px}.v39Wake.active{color:#82e894;border-color:#335b3b;background:#0b1a10}.v39Summary{font-size:10px;color:var(--muted);margin:0 0 8px}.v39List{display:grid;gap:6px}.v39Item{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;min-height:45px;border:1px solid var(--line2);border-radius:11px;background:#101a25;color:#fff;padding:6px 8px;text-align:left}.v39Item.current{border-color:#8e5516;background:#1a1209}.v39Item.complete{border-color:#335b3b;background:#0b1710}.v39Num{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;border:1px solid #31465b;font-size:10px;font-weight:1000}.v39Item.current .v39Num{background:var(--orange);color:#111;border-color:var(--orange)}.v39Item.complete .v39Num{color:#82e894}.v39Name{font-size:11px;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.v39State{font-size:9px;color:var(--muted);white-space:nowrap}.v39Item.current .v39State{color:var(--orange)}
+  `;document.head.appendChild(s);}
+  function updateVersion(){const v=$id('profile')?.lastElementChild;if(!v)return;const h=v.querySelector('h3'),p=v.querySelector('p');if(h)h.textContent='Versión Premium V39';if(p)p.textContent='Mapa de sesión con progreso y salto directo entre ejercicios, más pantalla activa durante el entrenamiento cuando el dispositivo lo permite, además de todas las funciones V38.';}
+  function planIndices(){if(!currentWorkout)return[];const r=routines?.[currentWorkout.day];if(!r)return[];const items=currentWorkout.adaptation?.items;if(Array.isArray(items)&&items.length)return items.map(x=>x.index).filter(i=>r.ex[i]);return r.ex.map((_,i)=>i);}
+  function plannedSets(index){const item=currentWorkout?.adaptation?.items?.find(x=>x.index===index);return Math.min(state?.[currentWorkout.day]?.[index]?.length||0,item?.count||20);}
+  function countFor(index){const n=plannedSets(index),list=(state?.[currentWorkout.day]?.[index]||[]).slice(0,n);return{done:list.filter(s=>s.done).length,total:n};}
+  function totalProgress(){let done=0,total=0;for(const i of planIndices()){const c=countFor(i);done+=c.done;total+=c.total;}return{done,total};}
+  function buildMap(){if($id('v39Map'))return;const register=$id('register'),work=register?.querySelector('.sets');if(!register||!work)return;const panel=create('div','v39Map');panel.id='v39Map';panel.innerHTML='<div class="v39MapTop"><h2>Mapa de la sesión</h2><span class="v39Wake" id="v39WakeStatus">Pantalla normal</span></div><p class="v39Summary" id="v39Summary"></p><div class="v39List" id="v39List"></div>';const nav=$id('v29SessionNav');if(nav)nav.after(panel);else work.before(panel);}
+  function jump(index){if(!currentWorkout||!routines[currentWorkout.day]?.ex[index])return;openDay(currentWorkout.day);openExercise(index);openRegister();renderMap();}
+  function renderMap(){buildMap();const panel=$id('v39Map');if(!panel)return;panel.hidden=!currentWorkout;if(!currentWorkout){renderWake();return;}const indices=planIndices(),host=$id('v39List'),tot=totalProgress();$id('v39Summary').textContent=`${tot.done}/${tot.total} series completadas · ${Math.max(0,tot.total-tot.done)} pendientes`;host.replaceChildren();indices.forEach((index,pos)=>{const ex=routines[currentWorkout.day].ex[index],c=countFor(index),btn=create('button','v39Item');btn.type='button';if(index===currentWorkout.exercise)btn.classList.add('current');if(c.total&&c.done>=c.total)btn.classList.add('complete');btn.setAttribute('aria-label',`${ex.name}: ${c.done} de ${c.total} series. Abrir ejercicio.`);const num=create('span','v39Num',c.total&&c.done>=c.total?'✓':String(pos+1)),name=create('span','v39Name',ex.name),stateText=create('span','v39State',index===currentWorkout.exercise?'AHORA':`${c.done}/${c.total}`);btn.append(num,name,stateText);btn.onclick=()=>jump(index);host.appendChild(btn);});renderWake();}
+  function renderWake(){const out=$id('v39WakeStatus');if(!out)return;out.classList.toggle('active',Boolean(wakeLock));out.textContent=wakeLock?'Pantalla activa':('wakeLock' in navigator?'Pantalla automática':'Bloqueo normal');}
+  async function requestWake(){if(wakeLock||wakeRequesting||!currentWorkout||document.visibilityState==='hidden'||!('wakeLock' in navigator))return;wakeRequesting=true;try{const lock=await navigator.wakeLock.request('screen');if(!currentWorkout){try{await lock.release();}catch{}return;}wakeLock=lock;lock.addEventListener?.('release',()=>{if(wakeLock===lock)wakeLock=null;renderWake();});}catch{}finally{wakeRequesting=false;renderWake();}}
+  async function releaseWake(){const lock=wakeLock;wakeLock=null;if(lock)try{await lock.release();}catch{}renderWake();}
+  function syncWake(){if(currentWorkout){requestWake();}else releaseWake();renderWake();}
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncWake();});
+  function renderV39(){renderMap();syncWake();}
+
+  const baseRenderSets=renderSets;renderSets=function(){baseRenderSets();renderV39();};
+  const baseOpenRegister=openRegister;openRegister=function(){baseOpenRegister();if($id('register')?.classList.contains('active'))renderV39();};
+  const baseShow=show;show=function(id){baseShow(id);if(id==='register')renderV39();else syncWake();if(id==='profile')updateVersion();};
+  const baseFinish=finishDay;finishDay=function(){baseFinish();renderV39();};
+  const baseDiscard=discardWorkout;discardWorkout=function(){baseDiscard();renderV39();};
+  const baseProgress=renderProgress;renderProgress=function(){baseProgress();updateVersion();syncWake();};
+  injectStyles();buildMap();renderV39();updateVersion();setInterval(()=>{if(currentWorkout){renderMap();syncWake();}},3000);
+})();
