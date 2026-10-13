@@ -1,0 +1,69 @@
+name: V24 Activation QA
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v24-activate-once.yml'
+permissions:
+  contents: write
+jobs:
+  activate-test-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install test runtime
+        run: npm install --no-save --package-lock=false jsdom@26.1.0
+      - name: Activate V24
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('overrides/index.html');s=p.read_text()
+          old='<script src="v23.js?v=23"></script>\n<noscript>'
+          new='<script src="v23.js?v=23"></script>\n<script src="v24.js?v=24"></script>\n<noscript>'
+          if old not in s: raise SystemExit('index V24 target not found')
+          p.write_text(s.replace(old,new,1))
+
+          p=Path('overrides/sw.js');s=p.read_text()
+          s=s.replace("const CACHE = 'vfit-pro-v23';","const CACHE = 'vfit-pro-v24';",1)
+          old="'./accounts.css?v=23', './accounts.js?v=23', './v23.js?v=23',"
+          new="'./accounts.css?v=23', './accounts.js?v=23', './v23.js?v=23', './v24.js?v=24',"
+          if old not in s: raise SystemExit('service worker V24 target not found')
+          p.write_text(s.replace(old,new,1))
+
+          p=Path('overrides/v24.js');s=p.read_text()
+          s=s.replace('1RM estimado usa la fórmula de Epley (peso × 1 + reps/30).','1RM estimado usa la fórmula de Epley: peso × (1 + reps/30).',1)
+          p.write_text(s)
+          PY
+      - name: Run account regression suite
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: node scripts/test-accounts.cjs
+      - name: Run adaptive regression suite
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: node scripts/test-adaptive.cjs
+      - name: Run V23 regression suite
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: node scripts/test-v23.cjs
+      - name: Run V24 analytics suite
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: node scripts/test-v24.cjs
+      - name: Verify activation files
+        run: |
+          grep -q 'v24.js?v=24' overrides/index.html
+          grep -q "vfit-pro-v24" overrides/sw.js
+          grep -q "./v24.js?v=24" overrides/sw.js
+      - name: Commit verified V24 activation
+        run: |
+          git config user.name 'VFIT QA'
+          git config user.email 'actions@users.noreply.github.com'
+          git add overrides/index.html overrides/sw.js overrides/v24.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'Activate V24 progress analytics after QA'
+            git push
+          fi
