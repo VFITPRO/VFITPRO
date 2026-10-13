@@ -17,7 +17,9 @@ jobs:
       - name: Install test runtime
         run: npm install --no-save --package-lock=false jsdom@26.1.0
       - name: Activate V26 compatibility layer
-        run: python scripts/activate-v26.py
+        run: |
+          python scripts/activate-v26.py
+          python scripts/fix-v26-state.py
       - name: Run account regression suite
         env:
           VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
