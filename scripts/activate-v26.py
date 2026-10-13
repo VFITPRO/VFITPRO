@@ -1,0 +1,90 @@
+from pathlib import Path
+
+# V26 UI fix: inserting a duplicated day shifts following favorites instead of swapping them.
+p = Path('overrides/v26.js')
+s = p.read_text()
+old = "function remapFavoritesDays(a,b=null,remove=false){favorites=favorites.flatMap(k=>{let[d,e]=k.split(':').map(Number);if(remove){if(d===a)return[];if(d>a)d--;return[`${d}:${e}`];}if(d===a)d=b;else if(d===b)d=a;return[`${d}:${e}`];});}"
+new = old + "\n  function remapFavoritesInsert(after){favorites=favorites.map(k=>{let[d,e]=k.split(':').map(Number);if(d>after)d++;return `${d}:${e}`;});}"
+if old not in s:
+    raise SystemExit('V26 favorite helper target not found')
+s = s.replace(old, new, 1)
+old = "remapFavoritesDays(index,index+1);afterStructure('Día duplicado');"
+new = "remapFavoritesInsert(index);afterStructure('Día duplicado');"
+if old not in s:
+    raise SystemExit('V26 duplicate favorite target not found')
+p.write_text(s.replace(old, new, 1))
+
+# Core program loader: retain legacy array format while allowing up to 10 days and custom exercises.
+p = Path('overrides/index.html')
+s = p.read_text()
+old = """function loadProgram(plans){
+  routines.splice(0,routines.length,...JSON.parse(JSON.stringify(originalProgram)));
+  if(Array.isArray(plans))routines.forEach((r,i)=>{
+    const list=plans[i];if(!Array.isArray(list))return;
+    const restored=list.slice(0,20).filter(x=>x&&exerciseCatalog.has(x.key)).map(x=>({...exerciseCatalog.get(x.key),stepKg:Number.isFinite(x.stepKg)&&x.stepKg>=.25&&x.stepKg<=20?x.stepKg:2.5,sets:`${Math.max(1,Math.min(20,Number(x.count)||3))} × ${/^\d{1,2}[–-]\d{1,2}$/.test(x.reps)?x.reps:'10–12'}`}));
+    if(restored.length)r.ex=restored;
+  });
+}"""
+new = """function loadProgram(plans,v26={}){
+  const customPrefix='assets/custom-exercise.svg#custom-';
+  for(const key of [...exerciseCatalog.keys()])if(String(key).startsWith(customPrefix))exerciseCatalog.delete(key);
+  if(Array.isArray(v26?.customExercises))for(const raw of v26.customExercises.slice(0,80)){
+    if(!raw||typeof raw!=='object')continue;const id=String(raw.id||'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,80);if(!id)continue;
+    const key=customPrefix+id,count=Math.max(1,Math.min(20,Number(raw.count)||3)),reps=/^\d{1,2}[–-]\d{1,2}$/.test(String(raw.reps||''))?String(raw.reps).replace('-','–'):'10–12';
+    exerciseCatalog.set(key,{name:String(raw.name||'Ejercicio personalizado').slice(0,80),primary:String(raw.primary||'Grupo principal').slice(0,100),secondary:String(raw.secondary||'—').slice(0,120),equipment:String(raw.equipment||'Otro · Personalizado').slice(0,100),sets:`${count} × ${reps}`,rir:String(raw.rir||'RIR 1–3').slice(0,30),image:key,thumb:'assets/custom-exercise.svg',anatomy:'assets/custom-exercise.svg',stepKg:Math.max(.25,Math.min(20,Number(raw.stepKg)||2.5))});
+  }
+  const metas=Array.isArray(v26?.days)?v26.days:[],count=Array.isArray(plans)&&plans.length?Math.max(1,Math.min(10,plans.length)):originalProgram.length,next=[];
+  for(let i=0;i<count;i++){
+    const source=originalProgram[i%originalProgram.length],meta=metas[i]||{},hero=/^assets\/day\//.test(String(meta.hero||''))?String(meta.hero):source.hero;
+    const r={day:i+1,title:String(meta.title||source.title||`Entrenamiento ${i+1}`).slice(0,80),time:String(meta.time||source.time||'45–60 min').slice(0,40),level:String(meta.level||source.level||'Personalizado').slice(0,40),hero,ex:[]};
+    const list=Array.isArray(plans?.[i])?plans[i]:source.ex.map(ex=>({key:ex.image,stepKg:Number(ex.stepKg)||2.5,count:parseInt(ex.sets)||3,reps:ex.sets.split(' × ')[1]||'10–12'}));
+    const restored=list.slice(0,20).filter(x=>x&&exerciseCatalog.has(x.key)).map(x=>({...exerciseCatalog.get(x.key),stepKg:Number.isFinite(Number(x.stepKg))&&Number(x.stepKg)>=.25&&Number(x.stepKg)<=20?Number(x.stepKg):2.5,sets:`${Math.max(1,Math.min(20,Number(x.count)||3))} × ${/^\d{1,2}[–-]\d{1,2}$/.test(String(x.reps||''))?String(x.reps).replace('-','–'):'10–12'}`}));
+    r.ex=restored.length?restored:JSON.parse(JSON.stringify(source.ex));next.push(r);
+  }
+  routines.splice(0,routines.length,...next);
+}"""
+if old not in s:
+    raise SystemExit('loadProgram target not found')
+s = s.replace(old, new, 1)
+
+# Preserve warm-up sets when account history is sanitized/reloaded.
+old = "return {duration:num(h.duration),...(h.adaptation?{adaptation:{minutes:Math.min(180,num(h.adaptation.minutes)),energy:h.adaptation.energy==='low'?'low':'normal'}}:{}),...(Array.isArray(h.exercises)?{exercises:h.exercises.slice(0,20).filter(ex=>ex&&typeof ex==='object').map(ex=>({name:String(ex.name||'Ejercicio').slice(0,160),key:String(ex.key||'').slice(0,200),sets:Array.isArray(ex.sets)?ex.sets.slice(0,20).map(s=>({kg:num(s.kg),reps:num(s.reps),rir:num(s.rir),done:true,note:String(s.note||'').slice(0,4000)})):[]}))}:{})};"
+new = "return {duration:num(h.duration),...(h.adaptation?{adaptation:{minutes:Math.min(180,num(h.adaptation.minutes)),energy:h.adaptation.energy==='low'?'low':'normal'}}:{}),...(Array.isArray(h.exercises)?{exercises:h.exercises.slice(0,20).filter(ex=>ex&&typeof ex==='object').map(ex=>({name:String(ex.name||'Ejercicio').slice(0,160),key:String(ex.key||'').slice(0,220),sets:Array.isArray(ex.sets)?ex.sets.slice(0,20).map(s=>({kg:num(s.kg),reps:num(s.reps),rir:num(s.rir),done:true,note:String(s.note||'').slice(0,4000)})):[],...(Array.isArray(ex.warmups)?{warmups:ex.warmups.slice(0,5).map(s=>({kg:num(s.kg),reps:num(s.reps),done:true}))}:{})}))}:{})};"
+if old not in s:
+    raise SystemExit('safeHistoryDetails target not found')
+s = s.replace(old, new, 1)
+if '<script src="accounts.js?v=25"></script>' not in s:
+    raise SystemExit('accounts script V25 target not found')
+s = s.replace('<script src="accounts.js?v=25"></script>', '<script src="accounts.js?v=26"></script>', 1)
+old = '<script src="v25.js?v=25"></script>\n<noscript>'
+new = '<script src="v25.js?v=25"></script>\n<script src="v26.js?v=26"></script>\n<noscript>'
+if old not in s:
+    raise SystemExit('V26 script target not found')
+p.write_text(s.replace(old, new, 1))
+
+# Account snapshot schema: restore V26 profile before the expanded program is rebuilt.
+p = Path('overrides/accounts.js')
+s = p.read_text()
+if 'schemaVersion:4' not in s:
+    raise SystemExit('account schema V4 target not found')
+s = s.replace('schemaVersion:4', 'schemaVersion:5', 1)
+if 'loadProgram(data.program);' not in s:
+    raise SystemExit('loadProgram account target not found')
+s = s.replace('loadProgram(data.program);', 'loadProgram(data.program, data.profile?.v26);', 1)
+old = "if (rawProfile.v25 && typeof rawProfile.v25 === 'object') profile.v25 = clone(rawProfile.v25);"
+new = old + "\n    if (rawProfile.v26 && typeof rawProfile.v26 === 'object') profile.v26 = clone(rawProfile.v26);"
+if old not in s:
+    raise SystemExit('profile V26 target not found')
+p.write_text(s.replace(old, new, 1))
+
+# Offline package.
+p = Path('overrides/sw.js')
+s = p.read_text()
+if "const CACHE = 'vfit-pro-v25';" not in s:
+    raise SystemExit('cache V25 target not found')
+s = s.replace("const CACHE = 'vfit-pro-v25';", "const CACHE = 'vfit-pro-v26';", 1)
+old = "'./accounts.css?v=23', './accounts.js?v=25', './v23.js?v=23', './v24.js?v=24', './v25.js?v=25',"
+new = "'./accounts.css?v=23', './accounts.js?v=26', './v23.js?v=23', './v24.js?v=24', './v25.js?v=25', './v26.js?v=26', './assets/custom-exercise.svg',"
+if old not in s:
+    raise SystemExit('service worker asset target not found')
+p.write_text(s.replace(old, new, 1))
