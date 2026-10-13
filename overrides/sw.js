@@ -35,3 +35,4 @@ self.addEventListener('fetch', event => {
     return response;
   })));
 });
+// V50 artwork cache-bust deployment marker.
