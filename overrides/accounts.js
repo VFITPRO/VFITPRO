@@ -285,6 +285,21 @@
     getUid: () => uid,
     snapshot: () => clone(snapshot()),
     markDirty: () => writeSaved('vfit-v23', Date.now()),
+    changePassword: async password => {
+      if (!uid || !ready) return {ok:false,message:'Inicia sesión antes de cambiar la contraseña.'};
+      const value = String(password ?? '');
+      if (value.length < 10) return {ok:false,message:'Usa al menos 10 caracteres.'};
+      try {
+        const {error} = await client.auth.updateUser({password:value});
+        if (error) {
+          if (/password|weak|characters|length/i.test(error.message || '')) return {ok:false,message:'Supabase rechazó esa contraseña. Prueba una contraseña más larga y difícil de adivinar.'};
+          return {ok:false,message:errorText(error)};
+        }
+        return {ok:true,message:'Contraseña actualizada correctamente.'};
+      } catch (error) {
+        return {ok:false,message:errorText(error)};
+      }
+    },
     restore: data => {
       if (!uid || !ready || !data || typeof data !== 'object') return false;
       store(cacheKey(uid)+':before-v23-restore', snapshot());
