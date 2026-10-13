@@ -59,4 +59,4 @@ jobs:
             git commit -m 'Activate V28 advanced sets after QA'
             git push
           fi
-# retry with forward-compatible V27 schema assertion
+# retry after V28 session-detail rendering fix
