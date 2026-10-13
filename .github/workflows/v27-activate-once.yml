@@ -62,3 +62,4 @@ jobs:
             git commit -m 'Activate V27 daily experience after QA'
             git push
           fi
+# retry after export navigation test stub
