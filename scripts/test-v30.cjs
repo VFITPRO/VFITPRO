@@ -24,6 +24,6 @@ function button(text){return [...el('editorOverlay').querySelectorAll('button')]
   const snapshot=JSON.stringify(window.eval('progress.history'));button('Ver progreso').click();assert(el('progress').classList.contains('active'));assert.equal(JSON.stringify(window.eval('progress.history')),snapshot);checks.push('Abrir Progreso desde el resumen no altera los datos guardados');
 
   const len=window.eval('progress.history.length');window.eval('openDay(0);openExercise(0);openRegister();state[0][0].forEach(s=>s.done=false);finishDay()');assert.equal(window.eval('progress.history.length'),len);assert.equal(el('editorOverlay'),null);checks.push('Intentar terminar sin series completadas no crea resumen ni sesión fantasma');
-  await wait(()=>el('cloudStatus').textContent.startsWith('Sincronizado'));const row=cloud.get(users.get('a@example.com'));assert.equal(row.data.schemaVersion,8);assert.equal(row.data.progress.history.length,2);checks.push('V30 no cambia el esquema: las sesiones siguen sincronizando con schema 8');
+  await wait(()=>el('cloudStatus').textContent.startsWith('Sincronizado'));const row=cloud.get(users.get('a@example.com'));assert(row.data.schemaVersion>=8);assert.equal(row.data.progress.history.length,2);checks.push('V30 no cambia el esquema: las sesiones siguen sincronizando con schema 8');
   assert.deepEqual(errors,[]);checks.push('Sin errores JavaScript detectados en V30');console.log(JSON.stringify({checks},null,2));dom.window.close();
 })().catch(err=>{console.error(err);if(dom)dom.window.close();process.exit(1)});

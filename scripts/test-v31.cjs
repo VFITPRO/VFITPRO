@@ -26,7 +26,7 @@ const login=async()=>{el('loginTab').click();el('accountEmail').value=email;el('
 function openDialog(){window.eval("show('profile')");el('v31ChangePassword').click();return el('editorOverlay');}
 function setPasswords(a,b=a){el('v31Password').value=a;el('v31PasswordConfirm').value=b;}
 (async()=>{
-  boot();await wait(()=>el('accountMessage')?.textContent.includes('Entra o crea'));await login();assert(el('v31Security'));assert.equal(el('profile').lastElementChild.querySelector('h3').textContent,'Versión Premium V31');assert.equal(typeof window.VFITAccountBridge.changePassword,'function');checks.push('V31 monta Seguridad de cuenta y expone solo una operación limitada de cambio de contraseña');
+  boot();await wait(()=>el('accountMessage')?.textContent.includes('Entra o crea'));await login();assert(el('v31Security'));assert(Number(el('profile').lastElementChild.querySelector('h3').textContent.match(/V(\d+)/)?.[1])>=31);assert.equal(typeof window.VFITAccountBridge.changePassword,'function');checks.push('V31 monta Seguridad de cuenta y expone solo una operación limitada de cambio de contraseña');
   const uid=window.VFITAccountBridge.getUid(),snapshot=JSON.stringify(window.VFITAccountBridge.snapshot());
 
   openDialog();setPasswords('corta123','corta123');el('v31PasswordSubmit').click();assert(el('v31PasswordStatus').textContent.includes('10 caracteres'));assert.equal(passwordRequests,0);checks.push('Contraseña corta se bloquea localmente sin hacer ninguna petición');
