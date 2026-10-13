@@ -31,16 +31,19 @@ jobs:
         run: |
           grep -q 'v49-catalog.js?v=49' overrides/index.html
           grep -q 'v49.js?v=49' overrides/index.html
+          grep -q 'v49-compat.js?v=49' overrides/index.html
           grep -q "vfit-pro-v49" overrides/sw.js
           grep -q "./v49-catalog.js?v=49" overrides/sw.js
           grep -q "./v49.js?v=49" overrides/sw.js
+          grep -q "./v49-compat.js?v=49" overrides/sw.js
           grep -q 'schemaVersion:9' overrides/accounts.js
       - name: Commit verified V49 activation
         run: |
           git config user.name 'VFIT QA'
           git config user.email 'actions@users.noreply.github.com'
-          git add overrides/index.html overrides/sw.js overrides/v49-catalog.js overrides/v49.js
+          git add overrides/index.html overrides/sw.js overrides/v49-catalog.js overrides/v49.js overrides/v49-compat.js
           if ! git diff --cached --quiet; then
             git commit -m 'Activate V49 expanded exercise library after QA'
             git push
           fi
+# retry: clamp active day/exercise after dynamic program replacement
