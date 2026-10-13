@@ -18,6 +18,7 @@
   function annotateSets(){document.querySelectorAll('#setRows .setRow').forEach((row,i)=>{const index=i+1;row.querySelectorAll('input').forEach(input=>{if(input.hasAttribute('aria-label'))return;const key=input.dataset.k;const labels={kg:`Serie ${index}: peso en kilogramos`,reps:`Serie ${index}: repeticiones`,rir:`Serie ${index}: RIR`,done:`Serie ${index}: completada`};if(labels[key])input.setAttribute('aria-label',labels[key]);});});}
   function updateNavA11y(){const active=document.querySelector('.screen.active')?.id;document.querySelectorAll('.bottomNav button[data-s]').forEach(btn=>{const selected=btn.dataset.s===active;btn.setAttribute('aria-current',selected?'page':'false');btn.setAttribute('aria-pressed',String(selected));});}
   function focusables(overlay){return [...overlay.querySelectorAll('button:not([disabled]),input:not([disabled]):not([type=hidden]),select:not([disabled]),textarea:not([disabled]),a[href],[tabindex]:not([tabindex="-1"])')].filter(el=>!el.hidden&&el.getAttribute('aria-hidden')!=='true');}
+  function rememberFocusedTrigger(){const active=document.activeElement;if(active&&active!==document.body&&active.isConnected&&!active.closest?.('#editorOverlay'))lastDialogTrigger=active;}
   document.addEventListener('click',event=>{
     const overlay=$id('editorOverlay');
     if(!overlay){const trigger=event.target.closest?.('button,a[href],[role=button]');if(trigger)lastDialogTrigger=trigger;return;}
@@ -31,5 +32,9 @@
   const baseShow=show;show=function(id){baseShow(id);annotateStatic();updateNavA11y();if(id==='profile')updateVersion();};
   const baseSets=renderSets;renderSets=function(){baseSets();annotateSets();annotateStatic();};
   const baseProgress=renderProgress;renderProgress=function(){baseProgress();annotateStatic();updateVersion();};
+  if(typeof openRoutineEditor==='function'){
+    const baseOpenRoutineEditor=openRoutineEditor;
+    openRoutineEditor=function(){rememberFocusedTrigger();return baseOpenRoutineEditor.apply(this,arguments);};
+  }
   injectStyles();annotateStatic();annotateSets();updateVersion();
 })();
