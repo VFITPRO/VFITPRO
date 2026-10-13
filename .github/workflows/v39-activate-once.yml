@@ -44,3 +44,4 @@ jobs:
           fi
 # retry after immediate session-map refresh fix
 # retry after current-row accessibility assertion fix
+# retry after Wake Lock cleanup hardening
