@@ -32,6 +32,21 @@
   function calculateFromUi(){const result=$id('v28PlateResult'),target=$id('v28PlateTarget'),bar=$id('v28PlateBar'),apply=$id('v28ApplyPlates');if(!result||!target||!bar)return;const plan=platePlan(target.value,bar.value,cfg().plates);lastPlateTotal=null;apply.disabled=true;if(!plan){result.textContent='Introduce valores válidos.';return;}if(plan.belowBar){result.innerHTML=`La barra pesa <b>${plan.bar} kg</b>, más que el objetivo. Usa una barra más ligera o aumenta la carga objetivo.`;return;}const pieces=plan.items.length?plan.items.map(x=>`${x.plate} kg × ${x.count}`).join(' + '):'sin discos';const exact=Math.abs(plan.difference)<.001;result.innerHTML=`Por lado: <b>${pieces}</b><br>Carga ${exact?'exacta':'alcanzable sin superar'}: <b>${plan.total} kg</b>${exact?'':` · faltan ${plan.difference} kg`}.`;lastPlateTotal=plan.total;apply.disabled=false;}
   function applyCalculated(){if(lastPlateTotal===null)return;const list=state?.[activeDay]?.[activeEx]||[];let changed=0;for(const s of list){if(!s.done){s.kg=lastPlateTotal;changed++;}}if(!changed){toast('No hay series pendientes');return;}persist();renderSets();toast(`Carga ${lastPlateTotal} kg aplicada a ${changed} serie${changed===1?'':'s'} pendiente${changed===1?'':'s'}`);}
 
+  function insertBeforeClose(panel,node){const close=[...panel.children].find(x=>x.tagName==='BUTTON'&&x.textContent==='Cerrar');if(close)panel.insertBefore(node,close);else panel.appendChild(node);return node;}
+  function openSessionDetailV28(session){
+    const panel=panelDialog(session.title);
+    if(session.adaptation)insertBeforeClose(panel,create('p','',`Sesión adaptada · ${session.adaptation.minutes} min previstos · energía ${session.adaptation.energy==='low'?'baja':'normal'}`));
+    for(const ex of session.exercises||[]){
+      insertBeforeClose(panel,create('h3','',ex.name));
+      for(const [i,s] of (ex.warmups||[]).entries()){const line=create('p','',`Calentamiento ${i+1}: ${s.kg} kg × ${s.reps} rep`);line.style.color='var(--orange)';insertBeforeClose(panel,line);}
+      for(const [i,s] of (ex.sets||[]).entries()){
+        const type=safeType(s.type),technique=type==='drop'?' · DROP SET':type==='failure'?' · AL FALLO':'';
+        const line=create('p',type==='normal'?'':'v28SpecialHistory',`Serie ${i+1}: ${s.kg} kg × ${s.reps} rep · RIR ${s.rir}${technique}`);insertBeforeClose(panel,line);
+        if(s.note)insertBeforeClose(panel,create('p','',s.note));
+      }
+    }
+  }
+
   function specialTechniqueUsed(day,index){const ex=routines?.[day]?.ex?.[index];if(!ex)return false;const sessions=(progress.history||[]).filter(h=>h.exercises?.some(e=>e.key===ex.image)).slice(0,2);return sessions.some(h=>h.exercises.find(e=>e.key===ex.image)?.sets?.some(s=>safeType(s.type)!=='normal'));}
   if(typeof progressionProposal==='function'){const baseProgression=progressionProposal;progressionProposal=function(day,index){if(specialTechniqueUsed(day,index))return{type:'hold',reason:'Una de las dos últimas sesiones usa Drop set o serie al fallo. Para proponer una subida automática, VFIT necesita dos sesiones comparables con series normales.'};return baseProgression(day,index);};}
 
@@ -39,6 +54,7 @@
   if(typeof changeSetCount==='function'){const baseChange=changeSetCount;changeSetCount=function(delta){const before=state?.[activeDay]?.[activeEx]?.length||0;baseChange(delta);const list=state?.[activeDay]?.[activeEx];if(delta>0&&list?.length>before){list.at(-1).type='normal';persist();renderSets();}};}
   const baseRenderSets=renderSets;renderSets=function(){baseRenderSets();decorateSetTypes();renderPlateCalculator();};
   const baseOpenRegister=openRegister;openRegister=function(){baseOpenRegister();if($id('register')?.classList.contains('active')){decorateSetTypes();renderPlateCalculator(true);}};
+  openSessionDetail=openSessionDetailV28;
   const baseShow=show;show=function(id){cfg();baseShow(id);if(id==='profile'){bindProfile();updateVersion();}if(id==='register'){decorateSetTypes();renderPlateCalculator();}};
   const baseRenderProgress=renderProgress;renderProgress=function(){baseRenderProgress();updateVersion();};
 
