@@ -61,7 +61,7 @@
     try { localStorage.setItem(key, JSON.stringify(value)); return true; }
     catch { status('No se pudo guardar la copia local. Mantén la conexión y no cierres la app hasta sincronizar.', true); return false; }
   }
-  function snapshot() { return clone({schemaVersion:7, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }
+  function snapshot() { return clone({schemaVersion:8, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }
   function cache() { if (uid) store(cacheKey(uid), {data:snapshot(), dirty, stamp}); }
   function status(message, error = false) {
     el('cloudStatus').textContent = message;
