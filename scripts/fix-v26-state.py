@@ -10,4 +10,9 @@ old="function dayId(index=activeDay){return syncDayMeta().days[index]?.id||`base
 new="function dayId(index=activeDay){const live=bridge.getProfile()?.v26?.days?.[index]?.id;return live||syncDayMeta().days[index]?.id||`base-${index+1}`;}"
 if old not in s:
     raise SystemExit('V26 dayId target not found')
+s=s.replace(old,new,1)
+old="const baseShow=show;show=function(id){baseShow(id);if(id==='routines'){syncDayMeta();buildProgramPanel();}if(id==='profile')updateVersion();};"
+new="const baseShow=show;show=function(id){baseShow(id);if(id==='home')syncDayMeta();if(id==='routines'){syncDayMeta();buildProgramPanel();}if(id==='profile'){syncDayMeta();updateVersion();}};"
+if old not in s:
+    raise SystemExit('V26 show target not found')
 p.write_text(s.replace(old,new,1))
