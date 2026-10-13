@@ -61,3 +61,11 @@ new="'./accounts.css?v=23', './accounts.js?v=28', './v23.js?v=23', './v24.js?v=2
 if old not in s: raise SystemExit('service worker V28 target not found')
 s=s.replace(old,new,1)
 p.write_text(s)
+
+# Regression tests for earlier versions must accept later snapshot schema revisions.
+p=Path('scripts/test-v27.cjs')
+s=p.read_text()
+old="assert.equal(row.data.schemaVersion,6);"
+new="assert(row.data.schemaVersion>=6);"
+if old not in s: raise SystemExit('V27 schema regression target not found')
+p.write_text(s.replace(old,new,1))
