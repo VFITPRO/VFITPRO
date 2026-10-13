@@ -1,12 +1,17 @@
 from pathlib import Path
 
-# Fix the one V27 pre-QA validation edge case: RIR 0 must stay 0.
+# Fix V27 pre-QA edge cases: RIR 0 must stay 0 and fresh accounts initialize on first Home.
 p=Path('overrides/v27.js')
 s=p.read_text()
 old="out.defaultRir=Math.max(0,Math.min(10,Math.round(Number(raw.defaultRir)||2)));"
 new="const rir=Number(raw.defaultRir);out.defaultRir=Math.max(0,Math.min(10,Math.round(Number.isFinite(rir)?rir:2)));"
 if old not in s:
     raise SystemExit('V27 RIR target not found')
+s=s.replace(old,new,1)
+old="show=function(id){baseShow(id);if(id==='profile'){bindSettings();renderInstallState();updateVersion();}if(id==='progress')renderMuscles();if(id==='register')renderExerciseRestHint();};"
+new="show=function(id){cfg();baseShow(id);if(id==='profile'){bindSettings();renderInstallState();updateVersion();}if(id==='progress')renderMuscles();if(id==='register')renderExerciseRestHint();};"
+if old not in s:
+    raise SystemExit('V27 fresh-account show target not found')
 s=s.replace(old,new,1)
 p.write_text(s)
 
