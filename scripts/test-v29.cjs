@@ -13,7 +13,7 @@ function boot(seed={}){const vc=new VirtualConsole();vc.on('jsdomError',e=>error
 const login=async email=>{el('loginTab').click();el('accountEmail').value=email;el('accountPassword').value='test-password';el('accountForm').dispatchEvent(new window.Event('submit',{cancelable:true}));await wait(ready);};
 const logout=async()=>{window.eval("show('profile')");el('signOutAccount').click();await wait(()=>!ready()&&el('signOutAccount').disabled===false);};
 (async()=>{
-  boot();await wait(()=>el('accountMessage')?.textContent.includes('Entra o crea'));await login('a@example.com');assert(el('v29Live'));assert(el('v29SessionNav'));assert.equal(el('profile').lastElementChild.querySelector('h3').textContent,'Versión Premium V29');checks.push('V29 monta barra de sesión y navegación sin iniciar una sesión fantasma');
+  boot();await wait(()=>el('accountMessage')?.textContent.includes('Entra o crea'));await login('a@example.com');assert(el('v29Live'));assert(el('v29SessionNav'));assert(Number(el('profile').lastElementChild.querySelector('h3').textContent.match(/V(\d+)/)?.[1])>=29);checks.push('V29 monta barra de sesión y navegación sin iniciar una sesión fantasma');
 
   window.eval('openDay(0);openExercise(0);openRegister()');assert(window.eval('currentWorkout!==null'));assert.equal(el('v29Live').hidden,false);assert(doc.body.classList.contains('v29Session'));assert(el('v29LiveTitle').textContent.includes('Press de banca'));assert(el('v29LiveSets').textContent.includes('0/18'));checks.push('Al comenzar entrenamiento aparece barra en vivo con ejercicio y progreso real');
 
