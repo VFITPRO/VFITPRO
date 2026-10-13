@@ -114,13 +114,23 @@ $('resumeBtn').onclick=()=>{openDay(currentWorkout?currentWorkout.day:((progress
 // Account-scoped program customization. Catalog keys stay stable when exercises move.
 const originalProgram=JSON.parse(JSON.stringify(routines));
 const exerciseCatalog=new Map(originalProgram.flatMap(r=>r.ex).map(ex=>[ex.image,ex]));
-function loadProgram(plans){
-  routines.splice(0,routines.length,...JSON.parse(JSON.stringify(originalProgram)));
-  if(Array.isArray(plans))routines.forEach((r,i)=>{
-    const list=plans[i];if(!Array.isArray(list))return;
-    const restored=list.slice(0,20).filter(x=>x&&exerciseCatalog.has(x.key)).map(x=>({...exerciseCatalog.get(x.key),stepKg:Number.isFinite(x.stepKg)&&x.stepKg>=.25&&x.stepKg<=20?x.stepKg:2.5,sets:`${Math.max(1,Math.min(20,Number(x.count)||3))} × ${/^\d{1,2}[–-]\d{1,2}$/.test(x.reps)?x.reps:'10–12'}`}));
-    if(restored.length)r.ex=restored;
-  });
+function loadProgram(plans,v26={}){
+  const customPrefix='assets/custom-exercise.svg#custom-';
+  for(const key of [...exerciseCatalog.keys()])if(String(key).startsWith(customPrefix))exerciseCatalog.delete(key);
+  if(Array.isArray(v26?.customExercises))for(const raw of v26.customExercises.slice(0,80)){
+    if(!raw||typeof raw!=='object')continue;const id=String(raw.id||'').replace(/[^a-zA-Z0-9_-]/g,'').slice(0,80);if(!id)continue;
+    const key=customPrefix+id,count=Math.max(1,Math.min(20,Number(raw.count)||3)),reps=/^\d{1,2}[–-]\d{1,2}$/.test(String(raw.reps||''))?String(raw.reps).replace('-','–'):'10–12';
+    exerciseCatalog.set(key,{name:String(raw.name||'Ejercicio personalizado').slice(0,80),primary:String(raw.primary||'Grupo principal').slice(0,100),secondary:String(raw.secondary||'—').slice(0,120),equipment:String(raw.equipment||'Otro · Personalizado').slice(0,100),sets:`${count} × ${reps}`,rir:String(raw.rir||'RIR 1–3').slice(0,30),image:key,thumb:'assets/custom-exercise.svg',anatomy:'assets/custom-exercise.svg',stepKg:Math.max(.25,Math.min(20,Number(raw.stepKg)||2.5))});
+  }
+  const metas=Array.isArray(v26?.days)?v26.days:[],count=Array.isArray(plans)&&plans.length?Math.max(1,Math.min(10,plans.length)):originalProgram.length,next=[];
+  for(let i=0;i<count;i++){
+    const source=originalProgram[i%originalProgram.length],meta=metas[i]||{},hero=/^assets\/day\//.test(String(meta.hero||''))?String(meta.hero):source.hero;
+    const r={day:i+1,title:String(meta.title||source.title||`Entrenamiento ${i+1}`).slice(0,80),time:String(meta.time||source.time||'45–60 min').slice(0,40),level:String(meta.level||source.level||'Personalizado').slice(0,40),hero,ex:[]};
+    const list=Array.isArray(plans?.[i])?plans[i]:source.ex.map(ex=>({key:ex.image,stepKg:Number(ex.stepKg)||2.5,count:parseInt(ex.sets)||3,reps:ex.sets.split(' × ')[1]||'10–12'}));
+    const restored=list.slice(0,20).filter(x=>x&&exerciseCatalog.has(x.key)).map(x=>({...exerciseCatalog.get(x.key),stepKg:Number.isFinite(Number(x.stepKg))&&Number(x.stepKg)>=.25&&Number(x.stepKg)<=20?Number(x.stepKg):2.5,sets:`${Math.max(1,Math.min(20,Number(x.count)||3))} × ${/^\d{1,2}[–-]\d{1,2}$/.test(String(x.reps||''))?String(x.reps).replace('-','–'):'10–12'}`}));
+    r.ex=restored.length?restored:JSON.parse(JSON.stringify(source.ex));next.push(r);
+  }
+  routines.splice(0,routines.length,...next);
 }
 function programSnapshot(){return routines.map(r=>r.ex.map(ex=>({key:ex.image,stepKg:Number(ex.stepKg)||2.5,count:parseInt(ex.sets)||3,reps:ex.sets.split(' × ')[1]||'10–12'})))}
 function blankSets(ex){return Array.from({length:parseInt(ex.sets)||3},()=>({kg:0,reps:10,rir:2,done:false,note:''}))}
@@ -184,7 +194,7 @@ function moveExercise(a,b){remapFavorites(a,b);[routines[activeDay].ex[a],routin
 function afterProgramEdit(){persist();renderDays();openDay(activeDay);renderFavorites();openRoutineEditor()}
 function safeHistoryDetails(h){
  const num=n=>Math.max(0,Number.isFinite(Number(n))?Number(n):0);
- return {duration:num(h.duration),...(h.adaptation?{adaptation:{minutes:Math.min(180,num(h.adaptation.minutes)),energy:h.adaptation.energy==='low'?'low':'normal'}}:{}),...(Array.isArray(h.exercises)?{exercises:h.exercises.slice(0,20).filter(ex=>ex&&typeof ex==='object').map(ex=>({name:String(ex.name||'Ejercicio').slice(0,160),key:String(ex.key||'').slice(0,200),sets:Array.isArray(ex.sets)?ex.sets.slice(0,20).map(s=>({kg:num(s.kg),reps:num(s.reps),rir:num(s.rir),done:true,note:String(s.note||'').slice(0,4000)})):[]}))}:{})};
+ return {duration:num(h.duration),...(h.adaptation?{adaptation:{minutes:Math.min(180,num(h.adaptation.minutes)),energy:h.adaptation.energy==='low'?'low':'normal'}}:{}),...(Array.isArray(h.exercises)?{exercises:h.exercises.slice(0,20).filter(ex=>ex&&typeof ex==='object').map(ex=>({name:String(ex.name||'Ejercicio').slice(0,160),key:String(ex.key||'').slice(0,220),sets:Array.isArray(ex.sets)?ex.sets.slice(0,20).map(s=>({kg:num(s.kg),reps:num(s.reps),rir:num(s.rir),done:true,note:String(s.note||'').slice(0,4000)})):[],...(Array.isArray(ex.warmups)?{warmups:ex.warmups.slice(0,5).map(s=>({kg:num(s.kg),reps:num(s.reps),done:true}))}:{})}))}:{})};
 }
 function openSessionDetail(session){const panel=panelDialog(session.title);if(session.adaptation){const note=document.createElement('p');note.textContent='Sesión adaptada · '+session.adaptation.minutes+' min previstos · energía '+(session.adaptation.energy==='low'?'baja':'normal');panel.appendChild(note)}for(const ex of session.exercises||[]){const h=document.createElement('h3');h.textContent=ex.name;panel.appendChild(h);ex.sets.forEach((s,i)=>{const line=document.createElement('p');line.textContent=`Serie ${i+1}: ${s.kg} kg × ${s.reps} rep · RIR ${s.rir}`;panel.appendChild(line);if(s.note){const note=document.createElement('p');note.textContent=s.note;panel.appendChild(note)}})}}
 function exportTraining(){const blob=new Blob([JSON.stringify({version:22,exportedAt:new Date().toISOString(),program:programSnapshot(),state,progress,favorites,currentWorkout},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='VFIT-PRO-historial.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
@@ -290,9 +300,10 @@ renderSets=function(){setsBeforeProgression();renderProgression('register')};
 </script>
 <link rel="stylesheet" href="accounts.css?v=23">
 <script src="vendor/supabase-2.57.4.js"></script>
-<script src="accounts.js?v=25"></script>
+<script src="accounts.js?v=26"></script>
 <script src="v23.js?v=23"></script>
 <script src="v24.js?v=24"></script>
 <script src="v25.js?v=25"></script>
+<script src="v26.js?v=26"></script>
 <noscript><p style="padding:24px;color:white">Activa JavaScript para entrar en tu cuenta de VFIT PRO.</p></noscript>
 </body></html>
