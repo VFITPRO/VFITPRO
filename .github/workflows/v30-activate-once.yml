@@ -63,3 +63,4 @@ jobs:
             git commit -m 'Activate V30 post-workout summary after QA'
             git push
           fi
+# retry after locale-safe volume assertions
