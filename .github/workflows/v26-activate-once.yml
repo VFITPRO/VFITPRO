@@ -61,3 +61,4 @@ jobs:
             git commit -m 'Activate V26 free program builder after QA'
             git push
           fi
+# retry after live-profile reference fix
