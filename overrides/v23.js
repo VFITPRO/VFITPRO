@@ -46,7 +46,7 @@
       for (const [key, list] of Object.entries(raw.substituteLoads).slice(0, 100)) {
         if (!Array.isArray(list)) continue;
         base.substituteLoads[String(key).slice(0,220)] = list.slice(0,20).map(s => ({
-          kg: Math.max(0, Number(s.kg)||0), reps: Math.max(0, Math.round(Number(s.reps)||0)), rir: Math.max(0, Math.min(10, Math.round(Number(s.rir)||0))), done:false, note:String(s.note||'').slice(0,4000)
+          kg: Math.max(0, Number(s.kg)||0), reps: Math.max(0, Math.round(Number(s.reps)||0)), rir: Math.max(0, Math.min(10, Math.round(Number(s.rir)||0))), done:false, note:String(s.note||'').slice(0,4000), type:s.type==='drop'?'drop':s.type==='failure'?'failure':'normal'
         }));
       }
     }
@@ -55,7 +55,7 @@
         if (!/^\d+:\d+$/.test(slot) || !sub || typeof sub !== 'object') continue;
         base.substitutions[slot] = {
           originalKey:String(sub.originalKey||'').slice(0,220), replacementKey:String(sub.replacementKey||'').slice(0,220),
-          slotBackup:Array.isArray(sub.slotBackup)?sub.slotBackup.slice(0,20).map(s=>({kg:Math.max(0,Number(s.kg)||0),reps:Math.max(0,Math.round(Number(s.reps)||0)),rir:Math.max(0,Math.min(10,Math.round(Number(s.rir)||0))),done:s.done===true,note:String(s.note||'').slice(0,4000)})):[]
+          slotBackup:Array.isArray(sub.slotBackup)?sub.slotBackup.slice(0,20).map(s=>({kg:Math.max(0,Number(s.kg)||0),reps:Math.max(0,Math.round(Number(s.reps)||0)),rir:Math.max(0,Math.min(10,Math.round(Number(s.rir)||0))),done:s.done===true,note:String(s.note||'').slice(0,4000),type:s.type==='drop'?'drop':s.type==='failure'?'failure':'normal'})):[]
         };
       }
     }
@@ -210,7 +210,7 @@
     if(state[activeDay][activeEx].some(s=>s.done)){toast('Ya hay series completadas. Guarda o descarta antes de sustituir.');return}
     let c=cfg();const slot=subSlot(),existing=c.substitutions[slot];if(existing){restoreSubSlot(slot,false);c=cfg();}
     const backup=clone(state[activeDay][activeEx]),saved=c.substituteLoads[replacement.image]||[];const count=backup.length;
-    state[activeDay][activeEx]=Array.from({length:count},(_,i)=>saved[i]?{...saved[i],done:false}:{kg:0,reps:10,rir:2,done:false,note:''});
+    state[activeDay][activeEx]=Array.from({length:count},(_,i)=>saved[i]?{...saved[i],done:false,type:saved[i].type==='drop'?'drop':saved[i].type==='failure'?'failure':'normal'}:{kg:0,reps:10,rir:2,done:false,note:'',type:'normal'});
     c.substitutions[slot]={originalKey:routines[activeDay].ex[activeEx].image,replacementKey:replacement.image,slotBackup:backup};currentWorkout.exercise=activeEx;markDirty('Sustitución preparada para esta sesión');persist();openExercise(activeEx);
   }
   function restoreSubSlot(slot,notify=true){const c=cfg(),sub=c.substitutions[slot];if(!sub)return;const [d,e]=slot.split(':').map(Number);if(state[d]?.[e]&&Array.isArray(sub.slotBackup)&&sub.slotBackup.length)state[d][e]=clone(sub.slotBackup);delete c.substitutions[slot];markDirty(notify?'Ejercicio original restaurado':null);}

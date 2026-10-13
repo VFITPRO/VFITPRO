@@ -61,7 +61,7 @@
     try { localStorage.setItem(key, JSON.stringify(value)); return true; }
     catch { status('No se pudo guardar la copia local. Mantén la conexión y no cierres la app hasta sincronizar.', true); return false; }
   }
-  function snapshot() { return clone({schemaVersion:6, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }
+  function snapshot() { return clone({schemaVersion:7, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }
   function cache() { if (uid) store(cacheKey(uid), {data:snapshot(), dirty, stamp}); }
   function status(message, error = false) {
     el('cloudStatus').textContent = message;
@@ -74,7 +74,7 @@
     const num = (n, fallback = 0) => Number.isFinite(Number(n)) && Number(n) >= 0 ? Number(n) : fallback;
     state = routines.map((r,i) => r.ex.map((ex,j) => {
       const saved = data.state?.[i]?.[j];
-      return Array.isArray(saved) && saved.length ? saved.slice(0,20).map(s => ({kg:num(s.kg), reps:num(s.reps), rir:num(s.rir), done:s.done === true, note:typeof s.note === 'string' ? s.note.slice(0,4000) : ''})) : blankSets(ex);
+      return Array.isArray(saved) && saved.length ? saved.slice(0,20).map(s => ({kg:num(s.kg), reps:num(s.reps), rir:num(s.rir), done:s.done === true, note:typeof s.note === 'string' ? s.note.slice(0,4000) : '', type:s.type==='drop'?'drop':s.type==='failure'?'failure':'normal'})) : blankSets(ex);
     }));
     const p = data.progress || {};
     progress = {streak:0, sessions:num(p.sessions), volume:num(p.volume), records:{}, history:[], nextDay:num(p.nextDay)%routines.length};
@@ -89,6 +89,7 @@
     if (rawProfile.v25 && typeof rawProfile.v25 === 'object') profile.v25 = clone(rawProfile.v25);
     if (rawProfile.v26 && typeof rawProfile.v26 === 'object') profile.v26 = clone(rawProfile.v26);
     if (rawProfile.v27 && typeof rawProfile.v27 === 'object') profile.v27 = clone(rawProfile.v27);
+    if (rawProfile.v28 && typeof rawProfile.v28 === 'object') profile.v28 = clone(rawProfile.v28);
     activeDay = activeEx = 0;
     if (timerInt) {clearInterval(timerInt); timerInt = null;}
     restDeadline=null;restDuration=90;renderWorkoutClock();
