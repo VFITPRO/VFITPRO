@@ -14,7 +14,7 @@
     const out=defaults(); if(!raw||typeof raw!=='object')return out;
     out.defaultRest=Math.max(30,Math.min(600,Math.round(Number(raw.defaultRest)||90)));
     out.autoRest=raw.autoRest!==false; out.sound=raw.sound!==false; out.haptics=raw.haptics!==false;
-    out.defaultRir=Math.max(0,Math.min(10,Math.round(Number(raw.defaultRir)||2)));
+    const rir=Number(raw.defaultRir);out.defaultRir=Math.max(0,Math.min(10,Math.round(Number.isFinite(rir)?rir:2)));
     if(raw.exerciseRest&&typeof raw.exerciseRest==='object')for(const [key,val] of Object.entries(raw.exerciseRest).slice(0,250)){
       const n=Math.round(Number(val)||0);if(n>=30&&n<=600)out.exerciseRest[String(key).slice(0,240)]=n;
     }
@@ -120,7 +120,7 @@
   const baseOpenExercise=openExercise;
   openExercise=function(j){baseOpenExercise(j);renderExerciseRestHint();};
   const baseShow=show;
-  show=function(id){baseShow(id);if(id==='profile'){bindSettings();renderInstallState();updateVersion();}if(id==='progress')renderMuscles();if(id==='register')renderExerciseRestHint();};
+  show=function(id){cfg();baseShow(id);if(id==='profile'){bindSettings();renderInstallState();updateVersion();}if(id==='progress')renderMuscles();if(id==='register')renderExerciseRestHint();};
   const baseRenderProgress=renderProgress;
   renderProgress=function(){baseRenderProgress();renderMuscles();updateVersion();};
 

@@ -61,7 +61,7 @@
     try { localStorage.setItem(key, JSON.stringify(value)); return true; }
     catch { status('No se pudo guardar la copia local. Mantén la conexión y no cierres la app hasta sincronizar.', true); return false; }
   }
-  function snapshot() { return clone({schemaVersion:5, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }
+  function snapshot() { return clone({schemaVersion:6, program:programSnapshot(), state, progress, favorites, currentWorkout, profile}); }
   function cache() { if (uid) store(cacheKey(uid), {data:snapshot(), dirty, stamp}); }
   function status(message, error = false) {
     el('cloudStatus').textContent = message;
@@ -88,6 +88,7 @@
     if (rawProfile.v23 && typeof rawProfile.v23 === 'object') profile.v23 = clone(rawProfile.v23);
     if (rawProfile.v25 && typeof rawProfile.v25 === 'object') profile.v25 = clone(rawProfile.v25);
     if (rawProfile.v26 && typeof rawProfile.v26 === 'object') profile.v26 = clone(rawProfile.v26);
+    if (rawProfile.v27 && typeof rawProfile.v27 === 'object') profile.v27 = clone(rawProfile.v27);
     activeDay = activeEx = 0;
     if (timerInt) {clearInterval(timerInt); timerInt = null;}
     restDeadline=null;restDuration=90;renderWorkoutClock();
