@@ -76,3 +76,4 @@ jobs:
             git commit -m 'Activate V34 accessibility polish after QA'
             git push
           fi
+# retry after dialog trigger test fix
