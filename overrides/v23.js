@@ -216,6 +216,7 @@
   function restoreSubSlot(slot,notify=true){const c=cfg(),sub=c.substitutions[slot];if(!sub)return;const [d,e]=slot.split(':').map(Number);if(state[d]?.[e]&&Array.isArray(sub.slotBackup)&&sub.slotBackup.length)state[d][e]=clone(sub.slotBackup);delete c.substitutions[slot];markDirty(notify?'Ejercicio original restaurado':null);}
   function removeSubstitution(){restoreSubSlot(subSlot());persist();openExercise(activeEx);}
   function decorateExerciseForSub(){
+    document.querySelectorAll('.v23SubBadge').forEach(x=>x.remove());
     const replacement=subExercise();renderSubstitutionPanel();if(!replacement)return;
     $id('exTitle').textContent=replacement.name;$id('exMeta').textContent=replacement.equipment;$id('exImage').src=replacement.image;$id('exPrimary').textContent=replacement.primary;$id('exAnatomy').src=replacement.anatomy;$id('musclePrimary').textContent=replacement.primary;$id('musclePrincipalText').textContent=replacement.primary;$id('muscleSecondary').textContent=replacement.secondary;$id('tech').innerHTML=(techMap[replacement.name]||[]).map((x,i)=>`<div class="techRow"><div class="step">${i+1}</div><div>${x}</div></div>`).join('');
     const badge=document.createElement('div');badge.className='v23SubBadge';badge.textContent='SUSTITUCIÓN SOLO PARA HOY';$id('exMeta').after(badge);$id('progression-exercise')?.remove();
@@ -273,7 +274,7 @@
   const baseRenderSetsV23=renderSets;
   renderSets=function(){baseRenderSetsV23();if(subExercise())renderSubLastExercise();};
   const baseFinishDayV23=finishDay;
-  finishDay=function(){const day=activeDay,before=progress.sessions;baseFinishDayV23();if(progress.sessions>before){finalizeSubstitutions(day,progress.history[0]);recalcProgress();markDirty();persist();renderProgress();}};
+  finishDay=function(){const day=activeDay,before=progress.sessions,recordsBefore={...progress.records};baseFinishDayV23();if(progress.sessions>before){finalizeSubstitutions(day,progress.history[0]);progress.records=recordsBefore;recalcProgress();markDirty();persist();renderProgress();}};
   const baseDiscardV23=discardWorkout;
   discardWorkout=function(){const before=currentWorkout,day=before?.day;const slots=day===undefined?[]:Object.keys(cfg().substitutions).filter(x=>Number(x.split(':')[0])===day);baseDiscardV23();if(before&&currentWorkout===null){for(const slot of slots)restoreSubSlot(slot,false);if(slots.length){markDirty();persist();renderV23();}}};
   const baseShowV23=show;
