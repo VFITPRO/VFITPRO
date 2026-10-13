@@ -1,0 +1,44 @@
+name: V48 Live Session Summary QA
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/v48-activate-once.yml'
+permissions:
+  contents: write
+jobs:
+  activate-test-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install test runtime
+        run: npm install --no-save --package-lock=false jsdom@26.1.0
+      - name: Activate V48 layer
+        run: python scripts/activate-v48.py
+      - name: Run full regression suite
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: |
+          set -e
+          for t in test-accounts.cjs test-adaptive.cjs test-v23.cjs test-v24.cjs test-v25.cjs test-v26.cjs test-v27.cjs test-v28.cjs test-v29.cjs test-v30.cjs test-v31.cjs test-v32.cjs test-v33.cjs test-v34.cjs test-v35.cjs test-v36.cjs test-v37.cjs test-v38.cjs test-v39.cjs test-v40.cjs test-v41.cjs test-v42.cjs test-v43.cjs test-v44.cjs test-v45.cjs test-v46.cjs test-v47.cjs test-v48.cjs; do
+            echo "=== $t ==="
+            node "scripts/$t"
+          done
+      - name: Verify activation files
+        run: |
+          grep -q 'v48.js?v=48' overrides/index.html
+          grep -q "vfit-pro-v48" overrides/sw.js
+          grep -q "./v48.js?v=48" overrides/sw.js
+          grep -q 'schemaVersion:9' overrides/accounts.js
+      - name: Commit verified V48 activation
+        run: |
+          git config user.name 'VFIT QA'
+          git config user.email 'actions@users.noreply.github.com'
+          git add overrides/index.html overrides/sw.js overrides/v48.js
+          if ! git diff --cached --quiet; then
+            git commit -m 'Activate V48 live session summary after QA'
+            git push
+          fi
