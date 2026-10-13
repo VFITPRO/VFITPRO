@@ -1,0 +1,31 @@
+name: One-shot V50 artwork cache bust
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bump artwork asset URLs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('overrides/index.html')
+          s=p.read_text()
+          s=s.replace('v49-compat.js?v=49','v49-compat.js?v=50')
+          s=s.replace("navigator.serviceWorker.register('./sw.js')","navigator.serviceWorker.register('./sw.js?v=50')")
+          p.write_text(s)
+          sw=Path('overrides/sw.js')
+          t=sw.read_text().replace("./v49-compat.js?v=49","./v49-compat.js?v=50")
+          sw.write_text(t)
+          PY
+          rm .github/workflows/one-shot-v50-artwork.yml
+          git config user.name 'VFITPRO'
+          git config user.email 'actions@github.com'
+          git add overrides/index.html overrides/sw.js .github/workflows/one-shot-v50-artwork.yml
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'Force V50 artwork script and service worker refresh'
+          git push
