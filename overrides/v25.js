@@ -95,6 +95,6 @@
 
   injectStyles();buildSmartHome();buildPreferences();buildLibrary();
   const baseShow=show;show=function(id){baseShow(id);if(id==='home')renderSmartHome();if(id==='profile'){renderPreferences();updateVersion();}if(id==='routines')renderLibrary();};
-  const baseRenderProgress=renderProgress;renderProgress=function(){baseRenderProgress();renderSmartHome();};
+  const baseRenderProgress=renderProgress;renderProgress=function(){baseRenderProgress();renderSmartHome();updateVersion();};
   renderV25();
 })();

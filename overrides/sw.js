@@ -1,5 +1,5 @@
-const CACHE = 'vfit-pro-v24';
-const ASSETS = ['./', './index.html', './accounts.css?v=23', './accounts.js?v=23', './v23.js?v=23', './v24.js?v=24',
+const CACHE = 'vfit-pro-v25';
+const ASSETS = ['./', './index.html', './accounts.css?v=23', './accounts.js?v=25', './v23.js?v=23', './v24.js?v=24', './v25.js?v=25',
   './vendor/supabase-2.57.4.js', './assets/home-hero-v15.jpg',
   './manifest.webmanifest', './icon-premium-192.png', './icon-premium-512.png'];
 self.addEventListener('install', event => event.waitUntil(
