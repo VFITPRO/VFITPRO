@@ -54,8 +54,9 @@ jobs:
         run: |
           git config user.name 'VFIT QA'
           git config user.email 'actions@users.noreply.github.com'
-          git add overrides/index.html overrides/accounts.js overrides/v23.js overrides/sw.js overrides/v28.js
+          git add overrides/index.html overrides/accounts.js overrides/v23.js overrides/sw.js overrides/v28.js scripts/test-v27.cjs
           if ! git diff --cached --quiet; then
             git commit -m 'Activate V28 advanced sets after QA'
             git push
           fi
+# retry with forward-compatible V27 schema assertion
