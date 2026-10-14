@@ -16,25 +16,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p overrides/assets/exercises/premium
-          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-31ec-81f4-815f-97af7fdc1878/raw?se=2026-10-14T22%3A09%3A12Z&sp=r&sv=2026-02-06&sr=b&scid=278b1324-6c59-54ee-acc7-8af82822db63&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T07%3A17%3A52Z&ske=2026-10-15T07%3A17%3A52Z&sks=b&skv=2026-02-06&sig=dIL1oHXOAA%2BTkfpHBfSTUSPtT9OOaBX0TGcXjQAYPro%3D' -o overrides/assets/exercises/premium/aperturas-inclinadas-con-mancuernas.webp
-          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-d25c-81f4-bf64-269801cc2a5e/raw?se=2026-10-14T22%3A09%3A15Z&sp=r&sv=2026-02-06&sr=b&scid=00eccde9-f87b-5140-940c-ffd165b676ea&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A38%3A47Z&ske=2026-10-15T08%3A38%3A47Z&sks=b&skv=2026-02-06&sig=mo7q3RW1Vnl7rAl/nlOXPz84WKu6A5/cy3JIS3kC3ps%3D' -o overrides/assets/exercises/premium/cruce-de-poleas-medio.webp
-          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-2534-81f4-a214-c357bd0a0586/raw?se=2026-10-14T22%3A09%3A18Z&sp=r&sv=2026-02-06&sr=b&scid=4040252a-bd48-59d8-ae0e-f7b46de64e9a&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T07%3A37%3A43Z&ske=2026-10-15T07%3A37%3A43Z&sks=b&skv=2026-02-06&sig=nJbf05eEydgd0FyjMUVA6AhtpL07PGJsjNV6wSmp3B4%3D' -o overrides/assets/exercises/premium/cruce-de-poleas-de-abajo-arriba.webp
-          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-1eb4-81f4-9233-8d98bd8e657d/raw?se=2026-10-14T22%3A09%3A23Z&sp=r&sv=2026-02-06&sr=b&scid=3b78f168-b2ec-5322-ba5a-af824b9370f9&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T04%3A57%3A31Z&ske=2026-10-15T04%3A57%3A31Z&sks=b&skv=2026-02-06&sig=9BNj/41svV5/0yQRIHqeg3qSloSDW35mQl6Md8f4PM8%3D' -o overrides/assets/exercises/premium/cruce-de-poleas-de-arriba-abajo.webp
-          curl --fail --location --retry 3 'https://sdmntprukwest.oaiusercontent.com/files/00000000-3ed4-8243-b3b4-d17134ac9cec/raw?se=2026-10-14T22%3A09%3A28Z&sp=r&sv=2026-02-06&sr=b&scid=fd7fefbe-7bc5-5424-8ca7-15572a92eec8&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T07%3A37%3A56Z&ske=2026-10-15T07%3A37%3A56Z&sks=b&skv=2026-02-06&sig=Nl%2BWJjn3WtpVws6g7z6U7phOfbcOGvPcVHMaaLMXkq0%3D' -o overrides/assets/exercises/premium/pec-deck.webp
+          mkdir -p overrides/assets/exercises/premium overrides/assets/anatomy/premium
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-9aac-81f4-bc41-d54e000be7bc/raw?se=2026-10-14T22%3A09%3A56Z&sp=r&sv=2026-02-06&sr=b&scid=277bf4ef-e448-58e4-89b6-3b9d703e80c2&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T05%3A47%3A39Z&ske=2026-10-15T05%3A47%3A39Z&sks=b&skv=2026-02-06&sig=wvXARhSXL67prZfzlDnjA9vvUoTBiBrW6Oj/kSq2HHY%3D' -o overrides/assets/exercises/premium/fondos-enfocados-a-pecho.webp
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-0bb4-81f4-a520-d066250a5652/raw?se=2026-10-14T22%3A10%3A00Z&sp=r&sv=2026-02-06&sr=b&scid=f7f91fff-ce60-5fe4-b687-dcb97ddad887&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T05%3A01%3A20Z&ske=2026-10-15T05%3A01%3A20Z&sks=b&skv=2026-02-06&sig=AnE5S31J6XTMm/S8dDTR/ah/Ae0v2uIujNRDZsj2R/0%3D' -o overrides/assets/exercises/premium/flexiones.webp
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-a468-81f4-b143-1e4096710424/raw?se=2026-10-14T22%3A10%3A03Z&sp=r&sv=2026-02-06&sr=b&scid=169b638d-96c7-570b-a28e-a8c931e02082&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T07%3A17%3A54Z&ske=2026-10-15T07%3A17%3A54Z&sks=b&skv=2026-02-06&sig=%2BTG%2Bragl2QIGp/F7a4xpAN3IuLh4ZXdMYmLvN32Zv/Y%3D' -o overrides/assets/exercises/premium/flexiones-lastradas.webp
+          curl --fail --location --retry 3 'https://sdmntprukwest.oaiusercontent.com/files/00000000-b14c-8243-a77e-0fc7b17fc3ce/raw?se=2026-10-14T22%3A10%3A06Z&sp=r&sv=2026-02-06&sr=b&scid=c70f3924-35fa-5305-87fd-73699511ad7a&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A38%3A47Z&ske=2026-10-15T08%3A38%3A47Z&sks=b&skv=2026-02-06&sig=F3OatblviJMM8XbKfN8NK8Off4sGFx5vBYwvg7TcfoU%3D' -o overrides/assets/anatomy/premium/muscle-pectoral-medio.webp
+          curl --fail --location --retry 3 'https://sdmntprukwest.oaiusercontent.com/files/00000000-48f0-8243-a940-6a03bbfe4e38/raw?se=2026-10-14T22%3A10%3A10Z&sp=r&sv=2026-02-06&sr=b&scid=ee18d47a-e7c1-59d8-93d9-639ce67b74e6&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T06%3A33%3A42Z&ske=2026-10-15T06%3A33%3A42Z&sks=b&skv=2026-02-06&sig=YZo1DErsZUyuRskuqS%2BEoaARlJbz86odrvF5l4mGU5w%3D' -o overrides/assets/anatomy/premium/muscle-pectoral-superior.webp
       - name: Validate WebP files
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          files=['aperturas-inclinadas-con-mancuernas.webp','cruce-de-poleas-medio.webp','cruce-de-poleas-de-abajo-arriba.webp','cruce-de-poleas-de-arriba-abajo.webp','pec-deck.webp']
-          root=Path('overrides/assets/exercises/premium')
-          for name in files:
-              b=(root/name).read_bytes()
-              assert len(b)>100_000,(name,len(b))
-              assert b[:4]==b'RIFF' and b[8:12]==b'WEBP',name
-              print(name,len(b),'OK')
+          files=[Path('overrides/assets/exercises/premium/fondos-enfocados-a-pecho.webp'),Path('overrides/assets/exercises/premium/flexiones.webp'),Path('overrides/assets/exercises/premium/flexiones-lastradas.webp'),Path('overrides/assets/anatomy/premium/muscle-pectoral-medio.webp'),Path('overrides/assets/anatomy/premium/muscle-pectoral-superior.webp')]
+          for p in files:
+              b=p.read_bytes()
+              assert len(b)>100_000,(p.name,len(b))
+              assert b[:4]==b'RIFF' and b[8:12]==b'WEBP',p.name
+              print(p.name,len(b),'OK')
           PY
       - name: Commit verified assets
         shell: bash
@@ -42,7 +41,7 @@ jobs:
           set -euo pipefail
           git config user.name 'VFITPRO Asset Importer'
           git config user.email 'actions@users.noreply.github.com'
-          git add overrides/assets/exercises/premium/
+          git add overrides/assets/exercises/premium/ overrides/assets/anatomy/premium/
           git diff --cached --quiet && exit 0
-          git commit -m 'Import verified V50 chest assets batch 3'
+          git commit -m 'Import verified V50 chest assets batch 4'
           git push origin HEAD:v50-public-repair
