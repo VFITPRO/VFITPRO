@@ -16,24 +16,24 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p overrides/assets/exercises/premium overrides/assets/anatomy/premium
-          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-6b70-81f4-8727-0809b12d8495/raw?se=2026-10-14T22%3A10%3A34Z&sp=r&sv=2026-02-06&sr=b&scid=c33b39d8-094c-50eb-8c18-d7c103cff647&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T06%3A33%3A40Z&ske=2026-10-15T06%3A33%3A40Z&sks=b&skv=2026-02-06&sig=AW6rfxyBw9XB3kerXpStGJ9G3XSc588Wdcx7%2BzYNiak%3D' -o overrides/assets/anatomy/premium/muscle-pectoral-inferior.webp
-          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-9520-81f4-ab15-d710f7f1f944/raw?se=2026-10-14T22%3A10%3A37Z&sp=r&sv=2026-02-06&sr=b&scid=c913f64b-460e-5a92-9b60-62e2a026dd46&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T05%3A47%3A39Z&ske=2026-10-15T05%3A47%3A39Z&sks=b&skv=2026-02-06&sig=GlPLvmMefk7PH9poiDxovXf7wY3yWvS9FIfpD01NEXU%3D' -o overrides/assets/anatomy/premium/muscle-pectoral-mayor.webp
-          curl --fail --location --retry 3 'https://sdmntprdenmarkeast.oaiusercontent.com/files/00000000-d658-8210-b4b0-3e7cbcefaa07/raw?se=2026-10-14T22%3A10%3A40Z&sp=r&sv=2026-02-06&sr=b&scid=06535546-0ac9-543f-918a-b0e625f67fd3&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A10%3A43Z&ske=2026-10-15T08%3A10%3A43Z&sks=b&skv=2026-02-06&sig=d9AawsPFweX9caF1d4oVD5W80vLDhoWEd0X2DQZYjpU%3D' -o overrides/assets/exercises/premium/remo-seal.webp
-          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-e558-81f4-b15a-2d9065cfc015/raw?se=2026-10-14T22%3A10%3A45Z&sp=r&sv=2026-02-06&sr=b&scid=c75033c4-9af6-550f-8dd8-b24b4c1e61f3&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A10%3A43Z&ske=2026-10-15T08%3A10%3A43Z&sks=b&skv=2026-02-06&sig=MvC8LxHEVJ9u6SeTQP2b2Fy66AwiA4NJIs9xOB7DdEo%3D' -o overrides/assets/exercises/premium/jalon-al-pecho-agarre-neutro.webp
-          curl --fail --location --retry 3 'https://sdmntprdenmarkeast.oaiusercontent.com/files/00000000-65f8-8210-b23d-3384e69cd79f/raw?se=2026-10-14T22%3A10%3A48Z&sp=r&sv=2026-02-06&sr=b&scid=fc49df7a-0e8b-5507-973f-02b2f0cc9126&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A38%3A47Z&ske=2026-10-15T08%3A38%3A47Z&sks=b&skv=2026-02-06&sig=Tu3%2BUstXcaOon42PRZXasPzemTxHiQ5WX8U6kvhTybA%3D' -o overrides/assets/exercises/premium/jalon-al-pecho-agarre-ancho.webp
+          mkdir -p overrides/assets/exercises/premium
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-8b9c-81f4-b34d-b08ced1cf2c1/raw?se=2026-10-14T22%3A11%3A17Z&sp=r&sv=2026-02-06&sr=b&scid=8c75ed59-d2b0-5ae4-92b4-ae8154768c52&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A38%3A47Z&ske=2026-10-15T08%3A38%3A47Z&sks=b&skv=2026-02-06&sig=1zf8asFIQ3UIuXQmeror3ntoSCLw90GIwVN72oxmXfI%3D' -o overrides/assets/exercises/premium/remo-sentado-en-polea-agarre-neutro.webp
+          curl --fail --location --retry 3 'https://sdmntprindiasocentral.oaiusercontent.com/files/00000000-8eb8-8211-bf9a-9f6e47d2fcbf/raw?se=2026-10-14T22%3A11%3A21Z&sp=r&sv=2026-02-06&sr=b&scid=fee4cf30-22fc-57f3-8f39-89df8e01e694&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T05%3A07%3A39Z&ske=2026-10-15T05%3A07%3A39Z&sks=b&skv=2026-02-06&sig=oYk19CIAVRmhtAdc/RHJhjQB//ie741EvyR%2BVfICLlY%3D' -o overrides/assets/exercises/premium/remo-sentado-en-polea-agarre-ancho.webp
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-a38c-81f4-abdd-aa944088c080/raw?se=2026-10-14T22%3A11%3A25Z&sp=r&sv=2026-02-06&sr=b&scid=361242b7-b9a5-5cf6-b668-5805b178cd41&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A10%3A51Z&ske=2026-10-15T08%3A10%3A51Z&sks=b&skv=2026-02-06&sig=4RDezOrsZrF9hw1TZv/aNkrtR%2B5no9XRwKJmb1bCvQo%3D' -o overrides/assets/exercises/premium/remo-en-maquina-convergente.webp
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-d768-81f4-83ea-b631a0e46272/raw?se=2026-10-14T22%3A11%3A28Z&sp=r&sv=2026-02-06&sr=b&scid=bc736282-7572-52fa-bad7-bd9e9d2da975&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A38%3A47Z&ske=2026-10-15T08%3A38%3A47Z&sks=b&skv=2026-02-06&sig=8imzNzqYgSK7ShjfKvmUnFqGqhMqRmVb%2ByifD9PoXFA%3D' -o overrides/assets/exercises/premium/remo-unilateral-en-polea.webp
       - name: Validate WebP files
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          files=[Path('overrides/assets/anatomy/premium/muscle-pectoral-inferior.webp'),Path('overrides/assets/anatomy/premium/muscle-pectoral-mayor.webp'),Path('overrides/assets/exercises/premium/remo-seal.webp'),Path('overrides/assets/exercises/premium/jalon-al-pecho-agarre-neutro.webp'),Path('overrides/assets/exercises/premium/jalon-al-pecho-agarre-ancho.webp')]
-          for p in files:
-              b=p.read_bytes()
-              assert len(b)>100_000,(p.name,len(b))
-              assert b[:4]==b'RIFF' and b[8:12]==b'WEBP',p.name
-              print(p.name,len(b),'OK')
+          files=['remo-sentado-en-polea-agarre-neutro.webp','remo-sentado-en-polea-agarre-ancho.webp','remo-en-maquina-convergente.webp','remo-unilateral-en-polea.webp']
+          root=Path('overrides/assets/exercises/premium')
+          for name in files:
+              b=(root/name).read_bytes()
+              assert len(b)>100_000,(name,len(b))
+              assert b[:4]==b'RIFF' and b[8:12]==b'WEBP',name
+              print(name,len(b),'OK')
           PY
       - name: Commit verified assets
         shell: bash
@@ -41,7 +41,7 @@ jobs:
           set -euo pipefail
           git config user.name 'VFITPRO Asset Importer'
           git config user.email 'actions@users.noreply.github.com'
-          git add overrides/assets/exercises/premium/ overrides/assets/anatomy/premium/
+          git add overrides/assets/exercises/premium/
           git diff --cached --quiet && exit 0
-          git commit -m 'Import verified V50 anatomy and back assets batch 5'
+          git commit -m 'Import verified V50 back assets batch 6'
           git push origin HEAD:v50-public-repair
