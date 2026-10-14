@@ -1,0 +1,51 @@
+name: V50 asset import
+on:
+  push:
+    branches: [v50-public-repair]
+    paths: ['.github/workflows/v50-assets-import.yml']
+permissions:
+  contents: write
+jobs:
+  import-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v50-public-repair
+      - name: Download verified Drive originals
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p overrides/assets/exercises/premium
+          curl --fail --location --retry 3 'https://sdmntprdenmarkeast.oaiusercontent.com/files/00000000-0d18-8210-b16a-82035fd5d2af/raw?se=2026-10-14T22%3A05%3A51Z&sp=r&sv=2026-02-06&sr=b&scid=27d7f89a-4e69-581a-863d-f07787d94c84&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T07%3A37%3A50Z&ske=2026-10-15T07%3A37%3A50Z&sks=b&skv=2026-02-06&sig=ITb/ErKGo1dc749Cx2jEENQZ3fsErJejxS5I6hOLZJY%3D' -o overrides/assets/exercises/premium/press-de-banca-con-barra.webp
+          curl --fail --location --retry 3 'https://sdmntprindiasocentral.oaiusercontent.com/files/00000000-0ac0-8211-a302-d7de72b50011/raw?se=2026-10-14T22%3A05%3A59Z&sp=r&sv=2026-02-06&sr=b&scid=28fb413c-efdb-594e-8eb6-cb99cc2f1738&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T04%3A59%3A11Z&ske=2026-10-15T04%3A59%3A11Z&sks=b&skv=2026-02-06&sig=OSf1LVz/X7vLmemIUYcKuFwup61TKCEYBfCuRCaNo0k%3D' -o overrides/assets/exercises/premium/press-inclinado-con-barra.webp
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-70b0-81f4-a06e-6b6c187f1943/raw?se=2026-10-14T22%3A06%3A06Z&sp=r&sv=2026-02-06&sr=b&scid=1166abe7-7ac1-5aed-9831-8828da36df56&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T06%3A52%3A48Z&ske=2026-10-15T06%3A52%3A48Z&sks=b&skv=2026-02-06&sig=V1iJdle6Zd3vJvFwZsPPSlh6%2B8aluwn9P6oPaDo%2Bzyw%3D' -o overrides/assets/exercises/premium/press-declinado-con-barra.webp
+          curl --fail --location --retry 3 'https://sdmntprdenmarkeast.oaiusercontent.com/files/00000000-b8ec-8210-9a7d-e05578bbb144/raw?se=2026-10-14T22%3A06%3A17Z&sp=r&sv=2026-02-06&sr=b&scid=c5450af7-9a44-5135-98cb-44cde840d8cd&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T07%3A37%3A50Z&ske=2026-10-15T07%3A37%3A50Z&sks=b&skv=2026-02-06&sig=AokYPsT3QbqNQDzQO8gLI7J2mkH9P8zIEgc3LSoml%2BI%3D' -o overrides/assets/exercises/premium/press-plano-con-mancuernas.webp
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-aeb4-81f4-9308-c5bc747b408c/raw?se=2026-10-14T22%3A06%3A22Z&sp=r&sv=2026-02-06&sr=b&scid=63900d7f-63fd-58fb-bc2d-f4ee863bdec7&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A38%3A38Z&ske=2026-10-15T08%3A38%3A38Z&sks=b&skv=2026-02-06&sig=EuvQ2YwnVjsHy60Q41THJenNcNUdXb8xPupowHlNYMo%3D' -o overrides/assets/exercises/premium/press-inclinado-con-mancuernas.webp
+      - name: Validate WebP files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          files = [
+            'press-de-banca-con-barra.webp','press-inclinado-con-barra.webp','press-declinado-con-barra.webp',
+            'press-plano-con-mancuernas.webp','press-inclinado-con-mancuernas.webp'
+          ]
+          root=Path('overrides/assets/exercises/premium')
+          for name in files:
+              b=(root/name).read_bytes()
+              assert len(b)>100_000, (name,len(b))
+              assert b[:4]==b'RIFF' and b[8:12]==b'WEBP', name
+              print(name,len(b),'OK')
+          PY
+      - name: Commit verified assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'VFITPRO Asset Importer'
+          git config user.email 'actions@users.noreply.github.com'
+          git add overrides/assets/exercises/premium/
+          git diff --cached --quiet && exit 0
+          git commit -m 'Import verified V50 chest assets batch 1'
+          git push origin HEAD:v50-public-repair
