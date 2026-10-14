@@ -18,16 +18,75 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - name: Extract application
+      - name: Extract and validate application
         run: |
           set -euo pipefail
           mkdir -p public
           unzip -q VFIT_PRO_PREMIUM_V14.zip -d public
           cp -R overrides/. public/
+
+          # Force the repaired loader URL in the actually published HTML. This makes
+          # old cache entries for v49-compat.js?v=49 impossible to reuse.
+          sed -i 's#v49-compat.js?v=49#v49-compat.js?v=503#g' public/index.html
+          grep -q 'v49-compat.js?v=503' public/index.html
+          grep -q "v50-premium-art.js?v=503" public/v49-compat.js
+
+          node --check public/v49-compat.js
+          node --check public/v50-premium-art.js
+          node --check public/sw.js
+
+          python - <<'PY'
+          from pathlib import Path
+
+          photos = Path('public/assets/exercises/premium')
+          anatomy = Path('public/assets/anatomy/premium')
+          expected_photos = {
+              'press-de-banca-con-barra.webp',
+              'press-inclinado-con-barra.webp',
+              'press-declinado-con-barra.webp',
+              'press-plano-con-mancuernas.webp',
+              'press-inclinado-con-mancuernas.webp',
+              'press-de-pecho-en-maquina.webp',
+              'press-convergente-de-pecho.webp',
+              'press-de-banca-en-smith.webp',
+              'press-inclinado-en-smith.webp',
+              'aperturas-con-mancuernas.webp',
+              'aperturas-inclinadas-con-mancuernas.webp',
+              'cruce-de-poleas-medio.webp',
+              'cruce-de-poleas-de-abajo-arriba.webp',
+              'cruce-de-poleas-de-arriba-abajo.webp',
+              'pec-deck.webp',
+              'fondos-enfocados-a-pecho.webp',
+              'flexiones.webp',
+              'flexiones-lastradas.webp',
+              'remo-seal.webp',
+              'jalon-al-pecho-agarre-neutro.webp',
+              'jalon-al-pecho-agarre-ancho.webp',
+              'remo-sentado-en-polea-agarre-neutro.webp',
+              'remo-sentado-en-polea-agarre-ancho.webp',
+              'remo-en-maquina-convergente.webp',
+              'remo-unilateral-en-polea.webp',
+          }
+          expected_anatomy = {
+              'muscle-pectoral-medio.webp',
+              'muscle-pectoral-superior.webp',
+              'muscle-pectoral-inferior.webp',
+              'muscle-pectoral-mayor.webp',
+          }
+
+          actual_photos = {p.name for p in photos.glob('*.webp')}
+          actual_anatomy = {p.name for p in anatomy.glob('*.webp')}
+          missing = (expected_photos - actual_photos) | (expected_anatomy - actual_anatomy)
+          assert not missing, f'Missing premium assets: {sorted(missing)}'
+
+          for path in [*photos.glob('*.webp'), *anatomy.glob('*.webp')]:
+              data = path.read_bytes()
+              assert len(data) > 100_000, f'Truncated premium asset: {path} ({len(data)} bytes)'
+              assert data[:4] == b'RIFF' and data[8:12] == b'WEBP', f'Invalid WebP: {path}'
+              print(f'OK {path} {len(data)} bytes')
+          PY
+
           test -f public/index.html
-          test -f public/assets/exercises/premium/press-inclinado-con-barra.webp
-          test -f public/assets/exercises/premium/remo-seal.webp
-          test -f public/assets/exercises/premium/jalon-al-pecho-agarre-neutro.webp
           touch public/.nojekyll
       - uses: actions/configure-pages@v5
         with:
