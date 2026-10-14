@@ -24,15 +24,10 @@ jobs:
           mkdir -p public
           unzip -q VFIT_PRO_PREMIUM_V14.zip -d public
           cp -R overrides/. public/
-          for pack in V50_CHEST_1.zip V50_CHEST_2.zip V50_CHEST_3.zip V50_CHEST_4.zip; do
-            test -f "$pack"
-            unzip -oq "$pack" -d public
-          done
           test -f public/index.html
-          test -f public/assets/exercises/premium/press-de-banca-con-barra.webp
-          test -f public/assets/exercises/premium/flexiones-lastradas.webp
-          test -f public/assets/anatomy/premium/muscle-pectoral-medio.webp
-          test -f public/assets/anatomy/premium/muscle-pectoral-inferior.webp
+          test -f public/assets/exercises/premium/press-inclinado-con-barra.webp
+          test -f public/assets/exercises/premium/remo-seal.webp
+          test -f public/assets/exercises/premium/jalon-al-pecho-agarre-neutro.webp
           touch public/.nojekyll
       - uses: actions/configure-pages@v5
         with:
