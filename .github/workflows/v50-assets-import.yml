@@ -17,18 +17,18 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p overrides/assets/exercises/premium
-          curl --fail --location --retry 3 'https://sdmntprdenmarkeast.oaiusercontent.com/files/00000000-7d48-8210-9ad3-38bd11eb94f0/raw?se=2026-10-14T22%3A07%3A06Z&sp=r&sv=2026-02-06&sr=b&scid=cbab8e03-1659-5491-95c6-7fcc87238dbd&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A38%3A47Z&ske=2026-10-15T08%3A38%3A47Z&sks=b&skv=2026-02-06&sig=HWs/PhQ8Sb2Zp6opstv6bfYmkqwfP49khBA1H6BR/ns%3D' -o overrides/assets/exercises/premium/press-de-pecho-en-maquina.webp
-          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-5fd8-81f4-8e28-c95e06f2a394/raw?se=2026-10-14T22%3A07%3A11Z&sp=r&sv=2026-02-06&sr=b&scid=75433cad-2aea-5332-8c38-86ea747a1e1f&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T05%3A47%3A39Z&ske=2026-10-15T05%3A47%3A39Z&sks=b&skv=2026-02-06&sig=Txz1Sb79XqL8nSb8w17v%2BvCvMl/Y/lxyr367sN3Z85Y%3D' -o overrides/assets/exercises/premium/press-convergente-de-pecho.webp
-          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-2974-81f4-b904-de689336d857/raw?se=2026-10-14T22%3A07%3A15Z&sp=r&sv=2026-02-06&sr=b&scid=aa256972-8083-5ad1-88f9-727a1278a9bd&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T05%3A11%3A46Z&ske=2026-10-15T05%3A11%3A46Z&sks=b&skv=2026-02-06&sig=4%2Byc/C6kpxBDDnrkFhZLPWcGMK3VovXzv5K/HI3upqI%3D' -o overrides/assets/exercises/premium/press-de-banca-en-smith.webp
-          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-20b4-81f4-8b69-a97e490244b9/raw?se=2026-10-14T22%3A08%3A22Z&sp=r&sv=2026-02-06&sr=b&scid=8d1c20b1-4423-51c5-9dfe-b427f174ea58&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T07%3A37%3A50Z&ske=2026-10-15T07%3A37%3A50Z&sks=b&skv=2026-02-06&sig=y4CoxQiqO/TMZfksyiwU9ncLXH/hu6p/VQ9g9BQatzI%3D' -o overrides/assets/exercises/premium/press-inclinado-en-smith.webp
-          curl --fail --location --retry 3 'https://sdmntprpolandcentral.oaiusercontent.com/files/00000000-27c0-820a-bf4a-ec7d57d801d3/raw?se=2026-10-14T22%3A08%3A26Z&sp=r&sv=2026-02-06&sr=b&scid=5bc89789-9b03-58d5-bc2b-e6c8adfe16e1&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T09%3A27%3A03Z&ske=2026-10-15T09%3A27%3A03Z&sks=b&skv=2026-02-06&sig=/HU6bxWeJbzkfa3rA62kvXpBQmKDL%2BeyexVQxiAfyU8%3D' -o overrides/assets/exercises/premium/aperturas-con-mancuernas.webp
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-31ec-81f4-815f-97af7fdc1878/raw?se=2026-10-14T22%3A09%3A12Z&sp=r&sv=2026-02-06&sr=b&scid=278b1324-6c59-54ee-acc7-8af82822db63&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T07%3A17%3A52Z&ske=2026-10-15T07%3A17%3A52Z&sks=b&skv=2026-02-06&sig=dIL1oHXOAA%2BTkfpHBfSTUSPtT9OOaBX0TGcXjQAYPro%3D' -o overrides/assets/exercises/premium/aperturas-inclinadas-con-mancuernas.webp
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-d25c-81f4-bf64-269801cc2a5e/raw?se=2026-10-14T22%3A09%3A15Z&sp=r&sv=2026-02-06&sr=b&scid=00eccde9-f87b-5140-940c-ffd165b676ea&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T08%3A38%3A47Z&ske=2026-10-15T08%3A38%3A47Z&sks=b&skv=2026-02-06&sig=mo7q3RW1Vnl7rAl/nlOXPz84WKu6A5/cy3JIS3kC3ps%3D' -o overrides/assets/exercises/premium/cruce-de-poleas-medio.webp
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-2534-81f4-a214-c357bd0a0586/raw?se=2026-10-14T22%3A09%3A18Z&sp=r&sv=2026-02-06&sr=b&scid=4040252a-bd48-59d8-ae0e-f7b46de64e9a&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T07%3A37%3A43Z&ske=2026-10-15T07%3A37%3A43Z&sks=b&skv=2026-02-06&sig=nJbf05eEydgd0FyjMUVA6AhtpL07PGJsjNV6wSmp3B4%3D' -o overrides/assets/exercises/premium/cruce-de-poleas-de-abajo-arriba.webp
+          curl --fail --location --retry 3 'https://sdmntprnortheu.oaiusercontent.com/files/00000000-1eb4-81f4-9233-8d98bd8e657d/raw?se=2026-10-14T22%3A09%3A23Z&sp=r&sv=2026-02-06&sr=b&scid=3b78f168-b2ec-5322-ba5a-af824b9370f9&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T04%3A57%3A31Z&ske=2026-10-15T04%3A57%3A31Z&sks=b&skv=2026-02-06&sig=9BNj/41svV5/0yQRIHqeg3qSloSDW35mQl6Md8f4PM8%3D' -o overrides/assets/exercises/premium/cruce-de-poleas-de-arriba-abajo.webp
+          curl --fail --location --retry 3 'https://sdmntprukwest.oaiusercontent.com/files/00000000-3ed4-8243-b3b4-d17134ac9cec/raw?se=2026-10-14T22%3A09%3A28Z&sp=r&sv=2026-02-06&sr=b&scid=fd7fefbe-7bc5-5424-8ca7-15572a92eec8&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-14T07%3A37%3A56Z&ske=2026-10-15T07%3A37%3A56Z&sks=b&skv=2026-02-06&sig=Nl%2BWJjn3WtpVws6g7z6U7phOfbcOGvPcVHMaaLMXkq0%3D' -o overrides/assets/exercises/premium/pec-deck.webp
       - name: Validate WebP files
         shell: bash
         run: |
           set -euo pipefail
           python - <<'PY'
           from pathlib import Path
-          files=['press-de-pecho-en-maquina.webp','press-convergente-de-pecho.webp','press-de-banca-en-smith.webp','press-inclinado-en-smith.webp','aperturas-con-mancuernas.webp']
+          files=['aperturas-inclinadas-con-mancuernas.webp','cruce-de-poleas-medio.webp','cruce-de-poleas-de-abajo-arriba.webp','cruce-de-poleas-de-arriba-abajo.webp','pec-deck.webp']
           root=Path('overrides/assets/exercises/premium')
           for name in files:
               b=(root/name).read_bytes()
@@ -44,5 +44,5 @@ jobs:
           git config user.email 'actions@users.noreply.github.com'
           git add overrides/assets/exercises/premium/
           git diff --cached --quiet && exit 0
-          git commit -m 'Import verified V50 chest assets batch 2'
+          git commit -m 'Import verified V50 chest assets batch 3'
           git push origin HEAD:v50-public-repair
