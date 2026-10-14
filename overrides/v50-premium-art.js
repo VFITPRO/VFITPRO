@@ -5,7 +5,8 @@
 
   const PREMIUM = Object.freeze({
     'Press inclinado con barra': 'assets/exercises/premium/press-inclinado-con-barra.webp',
-    'Press convergente de pecho': 'assets/exercises/premium/press-convergente-de-pecho.webp'
+    'Press convergente de pecho': 'assets/exercises/premium/press-convergente-de-pecho.webp',
+    'Press de pecho en máquina': 'assets/exercises/premium/press-de-pecho-en-maquina.webp'
   });
 
   let applied = 0;
