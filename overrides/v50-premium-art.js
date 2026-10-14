@@ -6,41 +6,25 @@
   const ROOT = 'assets/exercises/premium/';
   const ANATOMY_ROOT = 'assets/anatomy/premium/';
   const PREMIUM = Object.freeze({
-    'Press inclinado con barra': {
-      thumb: ROOT + 'press-inclinado-con-barra.webp',
-      anatomy: ANATOMY_ROOT + 'muscle-pectoral-superior.webp'
-    },
-    'Press de pecho en máquina': {
-      thumb: ROOT + 'press-de-pecho-en-maquina.webp',
-      anatomy: ANATOMY_ROOT + 'muscle-pectoral-medio.webp'
-    },
-    'Press convergente de pecho': {
-      thumb: ROOT + 'press-convergente-de-pecho.webp',
-      anatomy: ANATOMY_ROOT + 'muscle-pectoral-mayor.webp'
-    }
+    'Press inclinado con barra': {thumb: ROOT + 'press-inclinado-con-barra.webp', anatomy: ANATOMY_ROOT + 'muscle-pectoral-superior.webp'},
+    'Press de pecho en máquina': {thumb: ROOT + 'press-de-pecho-en-maquina.webp', anatomy: ANATOMY_ROOT + 'muscle-pectoral-medio.webp'},
+    'Press convergente de pecho': {thumb: ROOT + 'press-convergente-de-pecho.webp', anatomy: ANATOMY_ROOT + 'muscle-pectoral-mayor.webp'}
   });
-
-  let applied = 0;
-  const stableKeys = [];
-  for (const [key, ex] of exerciseCatalog) {
-    const art = PREMIUM[String(ex?.name || '')];
-    if (!art) continue;
-    // IMPORTANT: ex.image is the stable catalog identity used by V49 history/routines.
-    // Never replace it with an artwork URL.
-    ex.thumb = art.thumb;
-    ex.anatomy = art.anatomy;
-    ex.premiumArt = true;
-    ex.premiumAnatomy = true;
-    stableKeys.push({ name: ex.name, key, image: ex.image });
-    applied += 1;
+  let applied=0;
+  for(const [key,ex] of exerciseCatalog){
+    const art=PREMIUM[String(ex?.name||'')];
+    if(!art)continue;
+    ex.thumb=art.thumb;
+    ex.anatomy=art.anatomy;
+    ex.premiumArt=true;
+    ex.premiumAnatomy=true;
+    applied++;
   }
-
-  window.VFITPremiumArtV50 = {
+  window.VFITPremiumArtV50={
     applied,
-    names: () => Object.keys(PREMIUM),
-    has: name => Object.prototype.hasOwnProperty.call(PREMIUM, String(name || '')),
-    thumb: name => PREMIUM[String(name || '')]?.thumb || null,
-    anatomy: name => PREMIUM[String(name || '')]?.anatomy || null,
-    stableKeys: () => stableKeys.map(x => ({...x}))
+    names:()=>Object.keys(PREMIUM),
+    has:name=>Object.prototype.hasOwnProperty.call(PREMIUM,String(name||'')),
+    thumb:name=>PREMIUM[String(name||'')]?.thumb||null,
+    anatomy:name=>PREMIUM[String(name||'')]?.anatomy||null
   };
 })();
