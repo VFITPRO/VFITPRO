@@ -18,7 +18,7 @@
 
   // V50 premium artwork loader. Only visual fields change; V49 identity keys remain intact.
   const premium=document.createElement('script');
-  premium.src='v50-premium-art.js?v=502';
+  premium.src='v50-premium-art.js?v=503';
   premium.async=false;
   premium.onload=()=>{
     try{
