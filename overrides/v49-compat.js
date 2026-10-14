@@ -16,10 +16,9 @@
   renderProgress=function(){clampActiveSelection();return beforeProgress();};
   window.VFITNavGuardV49={clamp:clampActiveSelection};
 
-  // V50 premium-art preview is loaded here so V49's full HTML remains untouched.
-  // The V50 module only replaces visual thumb/anatomy fields and must preserve ex.image keys.
+  // V50 premium artwork loader. Only visual fields change; V49 identity keys remain intact.
   const premium=document.createElement('script');
-  premium.src='v50-premium-art.js?v=50';
+  premium.src='v50-premium-art.js?v=501';
   premium.async=false;
   premium.onload=()=>{
     try{
@@ -39,7 +38,7 @@
       }
       if(typeof renderDays==='function')renderDays();
       if(document.getElementById('routines')?.classList.contains('active')&&window.VFITLibraryV49?.renderCatalog)window.VFITLibraryV49.renderCatalog();
-    }catch(e){console.warn('V50 premium preview load skipped',e);}
+    }catch(e){console.warn('V50 premium artwork load skipped',e);}
   };
   document.head.appendChild(premium);
 })();
