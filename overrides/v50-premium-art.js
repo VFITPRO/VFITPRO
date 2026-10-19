@@ -5,7 +5,7 @@
 
   const ROOT = 'assets/exercises/premium/';
   const ANATOMY_ROOT = 'assets/anatomy/premium/';
-  const VERSION = '?v=503';
+  const VERSION = '?v=504';
   const P = file => ROOT + file + VERSION;
   const M = file => ANATOMY_ROOT + file + VERSION;
   const A = Object.freeze({
@@ -16,8 +16,9 @@
   });
 
   const PREMIUM = Object.freeze({
-    // Pecho: 18 fotografías verificadas. Press declinado con mancuernas queda
-    // fuera por revisión visual y Press landmine unilateral sigue pendiente.
+    // Pecho: 19 fotografías verificadas. Press declinado con mancuernas queda
+    // fuera por revisión visual. Press landmine unilateral usa anatomía premium
+    // de pectoral superior, coherente con el catálogo V49.
     'Press de banca con barra': {thumb: P('press-de-banca-con-barra.webp'), anatomy: A.medio},
     'Press inclinado con barra': {thumb: P('press-inclinado-con-barra.webp'), anatomy: A.superior},
     'Press declinado con barra': {thumb: P('press-declinado-con-barra.webp'), anatomy: A.inferior},
@@ -36,6 +37,7 @@
     'Fondos enfocados a pecho': {thumb: P('fondos-enfocados-a-pecho.webp'), anatomy: A.inferior},
     'Flexiones': {thumb: P('flexiones.webp'), anatomy: A.mayor},
     'Flexiones lastradas': {thumb: P('flexiones-lastradas.webp'), anatomy: A.mayor},
+    'Press landmine unilateral': {thumb: P('press-landmine-unilateral.webp'), anatomy: A.superior},
 
     // Espalda: fotografías verificadas. Se conserva la anatomía V49 hasta que
     // exista una anatomía premium independiente y revisada para cada movimiento.
