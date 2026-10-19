@@ -5,20 +5,24 @@
 
   const ROOT = 'assets/exercises/premium/';
   const ANATOMY_ROOT = 'assets/anatomy/premium/';
-  const VERSION = '?v=504';
+  const VERSION = '?v=505';
   const P = file => ROOT + file + VERSION;
   const M = file => ANATOMY_ROOT + file + VERSION;
   const A = Object.freeze({
     medio: M('muscle-pectoral-medio.webp'),
     superior: M('muscle-pectoral-superior.webp'),
     inferior: M('muscle-pectoral-inferior.webp'),
-    mayor: M('muscle-pectoral-mayor.webp')
+    mayor: M('muscle-pectoral-mayor.webp'),
+    landmine: M('muscle-press-landmine-unilateral.webp')
+  });
+  const B = Object.freeze({
+    row: M('muscle-remo-curvado-con-barra.webp'),
+    unilateral: M('muscle-remo-unilateral-con-mancuerna.webp'),
+    cableNeutral: M('muscle-remo-sentado-en-polea-agarre-neutro.webp')
   });
 
   const PREMIUM = Object.freeze({
-    // Pecho: 19 fotografías verificadas. Press declinado con mancuernas queda
-    // fuera por revisión visual. Press landmine unilateral usa anatomía premium
-    // de pectoral superior, coherente con el catálogo V49.
+    // Pecho. Press declinado con mancuernas continúa fuera por revisión visual.
     'Press de banca con barra': {thumb: P('press-de-banca-con-barra.webp'), anatomy: A.medio},
     'Press inclinado con barra': {thumb: P('press-inclinado-con-barra.webp'), anatomy: A.superior},
     'Press declinado con barra': {thumb: P('press-declinado-con-barra.webp'), anatomy: A.inferior},
@@ -37,17 +41,18 @@
     'Fondos enfocados a pecho': {thumb: P('fondos-enfocados-a-pecho.webp'), anatomy: A.inferior},
     'Flexiones': {thumb: P('flexiones.webp'), anatomy: A.mayor},
     'Flexiones lastradas': {thumb: P('flexiones-lastradas.webp'), anatomy: A.mayor},
-    'Press landmine unilateral': {thumb: P('press-landmine-unilateral.webp'), anatomy: A.superior},
+    'Press landmine unilateral': {thumb: P('press-landmine-unilateral.webp'), anatomy: A.landmine},
 
-    // Espalda: fotografías verificadas. Se conserva la anatomía V49 hasta que
-    // exista una anatomía premium independiente y revisada para cada movimiento.
-    'Remo Seal': {thumb: P('remo-seal.webp')},
+    // Espalda. Una misma anatomía puede reutilizarse cuando el patrón muscular es equivalente.
+    'Remo curvado con barra': {thumb: P('remo-curvado-con-barra.webp'), anatomy: B.row},
+    'Remo unilateral con mancuerna': {thumb: P('remo-unilateral-con-mancuerna.webp'), anatomy: B.unilateral},
+    'Remo Seal': {thumb: P('remo-seal.webp'), anatomy: B.row},
     'Jalón al pecho agarre neutro': {thumb: P('jalon-al-pecho-agarre-neutro.webp')},
     'Jalón al pecho agarre ancho': {thumb: P('jalon-al-pecho-agarre-ancho.webp')},
-    'Remo sentado en polea agarre neutro': {thumb: P('remo-sentado-en-polea-agarre-neutro.webp')},
-    'Remo sentado en polea agarre ancho': {thumb: P('remo-sentado-en-polea-agarre-ancho.webp')},
-    'Remo en máquina convergente': {thumb: P('remo-en-maquina-convergente.webp')},
-    'Remo unilateral en polea': {thumb: P('remo-unilateral-en-polea.webp')}
+    'Remo sentado en polea agarre neutro': {thumb: P('remo-sentado-en-polea-agarre-neutro.webp'), anatomy: B.cableNeutral},
+    'Remo sentado en polea agarre ancho': {thumb: P('remo-sentado-en-polea-agarre-ancho.webp'), anatomy: B.row},
+    'Remo en máquina convergente': {thumb: P('remo-en-maquina-convergente.webp'), anatomy: B.row},
+    'Remo unilateral en polea': {thumb: P('remo-unilateral-en-polea.webp'), anatomy: B.unilateral}
   });
 
   let applied = 0;
