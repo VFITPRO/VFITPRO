@@ -27,9 +27,9 @@ jobs:
 
           # Force the repaired loader URL in the actually published HTML. This makes
           # old cache entries for v49-compat.js?v=49 impossible to reuse.
-          sed -i 's#v49-compat.js?v=49#v49-compat.js?v=503#g' public/index.html
-          grep -q 'v49-compat.js?v=503' public/index.html
-          grep -q "v50-premium-art.js?v=503" public/v49-compat.js
+          sed -i 's#v49-compat.js?v=49#v49-compat.js?v=504#g' public/index.html
+          grep -q 'v49-compat.js?v=504' public/index.html
+          grep -q "v50-premium-art.js?v=504" public/v49-compat.js
 
           node --check public/v49-compat.js
           node --check public/v50-premium-art.js
@@ -59,6 +59,7 @@ jobs:
               'fondos-enfocados-a-pecho.webp',
               'flexiones.webp',
               'flexiones-lastradas.webp',
+              'press-landmine-unilateral.webp',
               'remo-seal.webp',
               'jalon-al-pecho-agarre-neutro.webp',
               'jalon-al-pecho-agarre-ancho.webp',
@@ -108,20 +109,20 @@ jobs:
 
           curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors \
             -H 'Cache-Control: no-cache' "${BASE}?verify=${GITHUB_SHA}" -o live-check/index.html
-          grep -q 'v49-compat.js?v=503' live-check/index.html
+          grep -q 'v49-compat.js?v=504' live-check/index.html
 
           curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors \
-            -H 'Cache-Control: no-cache' "${BASE}v49-compat.js?v=503&verify=${GITHUB_SHA}" -o live-check/v49-compat.js
-          grep -q 'v50-premium-art.js?v=503' live-check/v49-compat.js
+            -H 'Cache-Control: no-cache' "${BASE}v49-compat.js?v=504&verify=${GITHUB_SHA}" -o live-check/v49-compat.js
+          grep -q 'v50-premium-art.js?v=504' live-check/v49-compat.js
 
           curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors \
-            -H 'Cache-Control: no-cache' "${BASE}v50-premium-art.js?v=503&verify=${GITHUB_SHA}" -o live-check/v50-premium-art.js
+            -H 'Cache-Control: no-cache' "${BASE}v50-premium-art.js?v=504&verify=${GITHUB_SHA}" -o live-check/v50-premium-art.js
           grep -q "'Press de banca con barra'" live-check/v50-premium-art.js
           grep -q "'Flexiones lastradas'" live-check/v50-premium-art.js
+          grep -q "'Press landmine unilateral'" live-check/v50-premium-art.js
           grep -q "'Remo unilateral en polea'" live-check/v50-premium-art.js
 
           python - <<'PY'
-          from pathlib import Path
           from urllib.request import Request, urlopen
           import os, time
 
@@ -133,8 +134,8 @@ jobs:
               'press-convergente-de-pecho.webp','press-de-banca-en-smith.webp','press-inclinado-en-smith.webp',
               'aperturas-con-mancuernas.webp','aperturas-inclinadas-con-mancuernas.webp','cruce-de-poleas-medio.webp',
               'cruce-de-poleas-de-abajo-arriba.webp','cruce-de-poleas-de-arriba-abajo.webp','pec-deck.webp',
-              'fondos-enfocados-a-pecho.webp','flexiones.webp','flexiones-lastradas.webp','remo-seal.webp',
-              'jalon-al-pecho-agarre-neutro.webp','jalon-al-pecho-agarre-ancho.webp',
+              'fondos-enfocados-a-pecho.webp','flexiones.webp','flexiones-lastradas.webp','press-landmine-unilateral.webp',
+              'remo-seal.webp','jalon-al-pecho-agarre-neutro.webp','jalon-al-pecho-agarre-ancho.webp',
               'remo-sentado-en-polea-agarre-neutro.webp','remo-sentado-en-polea-agarre-ancho.webp',
               'remo-en-maquina-convergente.webp','remo-unilateral-en-polea.webp'
           ]
@@ -160,7 +161,7 @@ jobs:
 
           for folder, names in [('assets/exercises/premium', photos), ('assets/anatomy/premium', anatomy)]:
               for name in names:
-                  url = f'{base}{folder}/{name}?v=503&verify={sha}'
+                  url = f'{base}{folder}/{name}?v=504&verify={sha}'
                   data = fetch(url)
                   assert len(data) > 100_000, f'Live asset truncated: {url} ({len(data)} bytes)'
                   assert data[:4] == b'RIFF' and data[8:12] == b'WEBP', f'Live asset invalid: {url}'
