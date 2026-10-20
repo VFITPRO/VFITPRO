@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#05080d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VFIT PRO">
+<link rel="apple-touch-icon" href="../icon-premium-192.png">
+<title>VFIT PRO — Rutina</title>
+<style>
+:root{--bg:#05080d;--card:#0c141d;--line:#223244;--text:#f7f8fb;--muted:#91a0ae;--orange:#ff8a16;--green:#58e36c}*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif}body{min-height:100vh;background:radial-gradient(circle at 50% -10%,#14263b 0,#07111b 28%,#05080d 60%)}.app{max-width:560px;margin:auto;padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 24px)}header{display:flex;align-items:center;justify-content:space-between;padding:8px 2px 14px}.brand{font-weight:1000;font-style:italic;font-size:22px;letter-spacing:-.04em}.brand span{color:var(--orange)}.week{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px}.week select{border:1px solid var(--line);background:#0d1823;color:white;border-radius:12px;padding:9px 10px;font-weight:800}.days{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px}.days button{border:1px solid var(--line);background:#0a121b;color:#9eacba;border-radius:12px;padding:10px 2px;font-weight:900}.days button.active{background:linear-gradient(135deg,#ffad2e,var(--orange));color:#111;border-color:transparent}.title{margin:2px 2px 10px}.title h1{font-size:25px;margin:0;letter-spacing:-.04em}.title p{font-size:12px;color:var(--muted);margin:4px 0 0}.visual{border:1px solid var(--line);background:#080f17;border-radius:22px;overflow:hidden;margin-bottom:14px;box-shadow:0 18px 42px #0008}.visual iframe{width:100%;height:64vh;min-height:500px;display:block;border:0;background:#0a1017}.visualFoot{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-top:1px solid var(--line);gap:10px}.visualFoot span{font-size:11px;color:var(--muted)}.visualFoot a{color:#111;background:linear-gradient(135deg,#ffad2e,var(--orange));padding:9px 11px;border-radius:11px;text-decoration:none;font-weight:900;font-size:11px}.progressTitle{font-size:15px;font-weight:1000;margin:6px 2px 8px}.exercise{border:1px solid var(--line);background:linear-gradient(180deg,#0d1721,#09111a);border-radius:17px;padding:11px;margin-bottom:8px}.exTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:9px}.exName{font-size:14px;font-weight:900;line-height:1.2}.target{font-size:10px;color:var(--orange);font-weight:800;white-space:nowrap}.fields{display:grid;grid-template-columns:1fr 1.35fr;gap:8px}.fields input{width:100%;border:1px solid #2b3e51;background:#101b27;color:white;border-radius:12px;padding:11px 10px;font-size:14px;outline:none}.fields input:focus{border-color:var(--orange)}.saved{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 18px);transform:translate(-50%,12px);background:#12331a;color:var(--green);border:1px solid #285f34;border-radius:999px;padding:8px 13px;font-size:11px;font-weight:900;opacity:0;pointer-events:none;transition:.18s}.saved.show{opacity:1;transform:translate(-50%,0)}.hint{font-size:11px;color:var(--muted);text-align:center;padding:8px 4px 4px}.cardio .fields{grid-template-columns:1fr}.cardio .fields input{font-size:13px}@media(max-height:700px){.visual iframe{height:55vh;min-height:390px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand">VFIT <span>PRO</span></div><label class="week">SEMANA <select id="week"></select></label></header>
+<div class="days" id="days"></div>
+<div class="title"><h1 id="dayTitle"></h1><p id="daySub"></p></div>
+<div class="visual"><iframe id="guide" title="Guía visual del día" allow="fullscreen"></iframe><div class="visualFoot"><span>La imagen queda aquí: no tienes que salir de la rutina.</span><a id="openBig" target="_blank" rel="noopener">VER GRANDE</a></div></div>
+<div class="progressTitle">PROGRESO DE ESTA SEMANA</div>
+<div id="list"></div>
+<div class="hint">Escribe tu peso y las repeticiones. Se guarda automáticamente en este iPhone.</div>
+</div>
+<div class="saved" id="saved">✓ GUARDADO</div>
+<script>
+const DAYS=[
+{key:'lunes',short:'L',title:'Lunes',sub:'Empuje + pierna',file:'17wQ6xay8GLzgD2VTSqNdoWHXtbLxPpMS',ex:[['Press de banca','4 × 8'],['Press militar con mancuernas','4 × 8'],['Press Arnold','3 × 10'],['Fondos en paralelas','3 × 10'],['Zancadas con mancuernas','3 × 10/pierna'],['Prensa de piernas','3 × 15'],['Elevaciones laterales','3 × 12'],['Elevación de piernas colgado','2 × 15'],['Crunch en máquina','2 × 15']]},
+{key:'martes',short:'M',title:'Martes',sub:'Tracción + cadena posterior',file:'1APK1QbbIT500EE2sJA8wsD5LUTmtpMHs',ex:[['Peso muerto rumano','4 × 6'],['Curl femoral','3 × 12'],['Remo con barra','4 × 8'],['Jalón al pecho','3 × 10'],['Face pulls','3 × 15'],['Elevación de talón de pie','3 × 15'],['Puente de glúteo con barra','3 × 12'],['Rueda abdominal','3 × 15'],['Plancha lateral','2 × 30 s/lado']]},
+{key:'miercoles',short:'X',title:'Miércoles',sub:'HIIT / recuperación',file:'1UygrGbGRIUEe9RQunSDhmhYTDJZrEZRT',cardio:true,ex:[['Cardio / HIIT','30 s fuerte + 90 s suave × 6'],['Movilidad','10–15 min']]},
+{key:'jueves',short:'J',title:'Jueves',sub:'Empuje + pierna',file:'1mdUEN38-uN5ww5yXofQ3nSFogvuoHGm7',ex:[['Press inclinado con barra','3 × 10'],['Press de hombro sentado','3 × 10'],['Fondos con peso','3 × 10'],['Extensión de tríceps en polea','3 × 12'],['Elevación frontal','3 × 12/lado'],['Sentadilla búlgara','3 × 12/pierna'],['Extensión de cuádriceps','3 × 15'],['Colgada activa','3 × fallo'],['Crunch con balón medicinal','2 × máximo']]},
+{key:'viernes',short:'V',title:'Viernes',sub:'Brazos + core',file:'19lahRKRAu2sdZUYA1VsvIH1GFusEuqfO',ex:[['Curl con mancuernas','3 × 12'],['Curl concentrado','3 × 12'],['Curl 21s','3 × 21'],['Extensión de tríceps con mancuerna','3 × 12'],['Press francés en polea','3 × 15'],['Elevación de piernas en banco','2 × 15'],['Russian twist con peso','2 × 20'],['Plancha con toque de hombro','2 × 15']]},
+{key:'sabado',short:'S',title:'Sábado',sub:'Cardio suave + movilidad',file:'1e6iCkY7z5b_AaMyD0-jMuiVBefuI0d9C',cardio:true,ex:[['Zona 2 / trote suave','45–60 min'],['Couch stretch','2–3 × 30–45 s/lado'],['Estiramiento de paloma','2–3 × 30–45 s/lado'],['Puente de glúteo sin carga','2 × 15–20'],['Foam rolling','Opcional'],['Colgada pasiva','2 × 30–60 s']]}
+];
+const STORAGE='vfit-rutina-simple-v1';
+let state={week:1,day:0,data:{}};try{state={...state,...JSON.parse(localStorage.getItem(STORAGE)||'{}')}}catch(e){}
+const week=document.getElementById('week'),days=document.getElementById('days'),list=document.getElementById('list'),guide=document.getElementById('guide'),saved=document.getElementById('saved');
+for(let i=1;i<=8;i++){const o=document.createElement('option');o.value=i;o.textContent=i;week.appendChild(o)}week.value=state.week;
+DAYS.forEach((d,i)=>{const b=document.createElement('button');b.textContent=d.short;b.onclick=()=>{state.day=i;save(false);render()};days.appendChild(b)});
+function save(flash=true){localStorage.setItem(STORAGE,JSON.stringify(state));if(flash){saved.classList.add('show');clearTimeout(save.t);save.t=setTimeout(()=>saved.classList.remove('show'),650)}}
+function keyFor(day,ex){return `${day}|w${state.week}|${ex}`}
+function render(){const d=DAYS[state.day]||DAYS[0];[...days.children].forEach((b,i)=>b.classList.toggle('active',i===state.day));document.getElementById('dayTitle').textContent=d.title;document.getElementById('daySub').textContent=d.sub;const preview=`https://drive.google.com/file/d/${d.file}/preview`;guide.src=preview;document.getElementById('openBig').href=`https://drive.google.com/file/d/${d.file}/view`;
+list.innerHTML='';d.ex.forEach(([name,target],idx)=>{const k=keyFor(d.key,idx),v=state.data[k]||{};const el=document.createElement('div');el.className='exercise'+(d.cardio?' cardio':'');el.innerHTML=`<div class="exTop"><div class="exName">${name}</div><div class="target">${target}</div></div>`+(d.cardio?`<div class="fields"><input data-k="${k}" data-f="note" value="${esc(v.note||'')}" placeholder="Tiempo / esfuerzo / nota"></div>`:`<div class="fields"><input data-k="${k}" data-f="kg" value="${esc(v.kg||'')}" inputmode="decimal" placeholder="Peso (kg)"><input data-k="${k}" data-f="reps" value="${esc(v.reps||'')}" placeholder="Reps: 8-8-7-6"></div>`);list.appendChild(el)});list.querySelectorAll('input').forEach(inp=>inp.addEventListener('input',e=>{const k=e.target.dataset.k,f=e.target.dataset.f;state.data[k]=state.data[k]||{};state.data[k][f]=e.target.value;save()}));window.scrollTo({top:0,behavior:'instant'})}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+week.onchange=()=>{state.week=Number(week.value);save(false);render()};render();
+</script>
+</body>
+</html>
