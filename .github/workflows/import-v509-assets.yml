@@ -1,0 +1,49 @@
+name: Import V509 routine premium assets
+on:
+  push:
+    branches: [v509-routine-aliases]
+    paths:
+      - '.github/workflows/import-v509-assets.yml'
+permissions:
+  contents: write
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and validate exact V509 bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 5 --retry-delay 2 \
+            'https://sdmntprpolandcentral.oaiusercontent.com/files/00000000-7524-820a-afec-193c134dc0ed/raw?se=2026-10-20T02%3A23%3A55Z&sp=r&sv=2026-02-06&sr=b&scid=0b42ff90-07f7-5926-b442-4f46beb98d71&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-19T21%3A56%3A26Z&ske=2026-10-20T21%3A56%3A26Z&sks=b&skv=2026-02-06&sig=ErDozcB0GOSkSp99Xaz2HUEsfFdbOOueuldmPyvi0fQ%3D' \
+            -o /tmp/v509-routine-assets.zip
+          echo 'c1c2aace970d7650c33214a7ce9146a483720e877c3c6e70dec92e9fb27ceef5  /tmp/v509-routine-assets.zip' | sha256sum -c -
+          unzip -oq /tmp/v509-routine-assets.zip -d .
+          python - <<'PY'
+          from pathlib import Path
+          expected = {
+            'overrides/assets/exercises/premium/extension-de-triceps-con-cuerda.webp': 549494,
+            'overrides/assets/exercises/premium/extension-de-triceps-al-frente.webp': 520560,
+            'overrides/assets/anatomy/premium/muscle-triceps-lateral.webp': 380714,
+            'overrides/assets/anatomy/premium/muscle-triceps-largo.webp': 344384,
+            'overrides/assets/anatomy/premium/muscle-triceps-medial.webp': 370180,
+            'overrides/assets/anatomy/premium/muscle-biceps-braquial.webp': 315938,
+            'overrides/assets/anatomy/premium/muscle-dorsal-ancho.webp': 273994,
+          }
+          for name, size in expected.items():
+              data = Path(name).read_bytes()
+              assert len(data) == size, (name, len(data), size)
+              assert data[:4] == b'RIFF' and data[8:12] == b'WEBP', name
+              print('OK', name, len(data))
+          PY
+      - name: Commit exact assets and remove one-shot importer
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/import-v509-assets.yml
+          git config user.name 'VFITPRO Asset Importer'
+          git config user.email 'actions@users.noreply.github.com'
+          git add -A
+          git commit -m 'Import V509 routine premium assets'
+          git push origin HEAD:v509-routine-aliases
