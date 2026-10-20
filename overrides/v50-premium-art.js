@@ -40,12 +40,14 @@
   });
 
   const PREMIUM = Object.freeze({
-    // Pecho. Press declinado con mancuernas continúa fuera por revisión visual.
+    // Pecho. V511 reutiliza la anatomía inferior también para el press declinado
+    // con mancuernas; la foto continúa pendiente de una versión visual aprobada.
     'Press de banca con barra': {thumb: P('press-de-banca-con-barra.webp'), anatomy: A.medio},
     'Press inclinado con barra': {thumb: P('press-inclinado-con-barra.webp'), anatomy: A.superior},
     'Press declinado con barra': {thumb: P('press-declinado-con-barra.webp'), anatomy: A.inferior},
     'Press plano con mancuernas': {thumb: P('press-plano-con-mancuernas.webp'), anatomy: A.medio},
     'Press inclinado con mancuernas': {thumb: P('press-inclinado-con-mancuernas.webp'), anatomy: A.superior},
+    'Press declinado con mancuernas': {anatomy: A.inferior},
     'Press de pecho en máquina': {thumb: P('press-de-pecho-en-maquina.webp'), anatomy: A.medio},
     'Press convergente de pecho': {thumb: P('press-convergente-de-pecho.webp'), anatomy: A.mayor},
     'Press de banca en Smith': {thumb: P('press-de-banca-en-smith.webp'), anatomy: A.medio},
@@ -61,16 +63,32 @@
     'Flexiones lastradas': {thumb: P('flexiones-lastradas.webp'), anatomy: A.mayor},
     'Press landmine unilateral': {thumb: P('press-landmine-unilateral.webp'), anatomy: A.landmine},
 
-    // Espalda.
+    // Espalda. Los patrones de remo comparten el mapa posterior de dorsal/espalda
+    // media; los patrones verticales y pullovers reutilizan dorsal ancho.
     'Remo curvado con barra': {thumb: P('remo-curvado-con-barra.webp'), anatomy: B.row},
-    'Remo unilateral con mancuerna': {thumb: P('remo-unilateral-con-mancuerna.webp'), anatomy: B.unilateral},
-    'Remo Seal': {thumb: P('remo-seal.webp'), anatomy: B.row},
-    'Jalón al pecho agarre neutro': {thumb: P('jalon-al-pecho-agarre-neutro.webp'), anatomy: B.lat},
-    'Jalón al pecho agarre ancho': {thumb: P('jalon-al-pecho-agarre-ancho.webp'), anatomy: B.lat},
+    'Remo Pendlay': {anatomy: B.row},
+    'Remo T': {anatomy: B.row},
+    'Remo con pecho apoyado y mancuernas': {anatomy: B.row},
+    'Remo en máquina convergente': {thumb: P('remo-en-maquina-convergente.webp'), anatomy: B.row},
     'Remo sentado en polea agarre neutro': {thumb: P('remo-sentado-en-polea-agarre-neutro.webp'), anatomy: B.cableNeutral},
     'Remo sentado en polea agarre ancho': {thumb: P('remo-sentado-en-polea-agarre-ancho.webp'), anatomy: B.row},
-    'Remo en máquina convergente': {thumb: P('remo-en-maquina-convergente.webp'), anatomy: B.row},
+    'Remo unilateral con mancuerna': {thumb: P('remo-unilateral-con-mancuerna.webp'), anatomy: B.unilateral},
     'Remo unilateral en polea': {thumb: P('remo-unilateral-en-polea.webp'), anatomy: B.unilateral},
+    'Remo Seal': {thumb: P('remo-seal.webp'), anatomy: B.row},
+    'Remo alto en máquina': {anatomy: B.row},
+    'Jalón al pecho agarre ancho': {thumb: P('jalon-al-pecho-agarre-ancho.webp'), anatomy: B.lat},
+    'Jalón al pecho agarre neutro': {thumb: P('jalon-al-pecho-agarre-neutro.webp'), anatomy: B.lat},
+    'Jalón al pecho agarre supino': {anatomy: B.lat},
+    'Jalón unilateral': {anatomy: B.lat},
+    'Dominadas pronas': {anatomy: B.lat},
+    'Dominadas supinas': {anatomy: B.lat},
+    'Dominadas asistidas': {anatomy: B.lat},
+    'Pullover en polea con brazos rectos': {anatomy: B.lat},
+    'Pullover en máquina': {anatomy: B.lat},
+    'Pullover con mancuerna': {anatomy: B.lat},
+    'Remo invertido': {anatomy: B.row},
+    // Rack pull y peso muerto convencional quedan pendientes de una anatomía
+    // específica de erectores/trapecio/cadena posterior.
 
     // Hombro. Reutiliza anatomías sólo cuando el patrón muscular principal coincide.
     'Press militar con barra': {thumb: P('press-militar-con-barra.webp'), anatomy: C.deltoidGeneral},
@@ -90,26 +108,70 @@
     'Pájaros con mancuernas': {thumb: P('pajaros-con-mancuernas.webp'), anatomy: C.deltoidPosterior},
     'Apertura posterior en polea': {anatomy: C.deltoidPosterior},
     'Face pull': {thumb: P('face-pull.webp'), anatomy: C.deltoidPosterior},
-    // El asset recuperado de remo al mentón se conserva como respaldo, pero no se mapea porque el catálogo exige barra EZ.
+    'Remo al mentón': {anatomy: C.deltoidTrap},
+    // Elevación Y queda pendiente: necesita trapecio bajo/manguito rotador específico.
 
-    // Bíceps.
+    // Bíceps. No se reutiliza el bíceps general en martillos, curl inverso ni
+    // variantes de cabeza larga cuando el catálogo pide una activación distinta.
     'Curl con barra recta': {thumb: P('curl-con-barra-recta.webp'), anatomy: C.biceps},
+    'Curl con barra EZ': {anatomy: C.biceps},
     'Curl alterno con mancuernas': {thumb: P('curl-alterno-con-mancuernas.webp'), anatomy: C.biceps},
+    'Curl de concentración': {anatomy: C.biceps},
     'Curl Scott con barra EZ': {thumb: P('curl-scott-con-barra-ez.webp'), anatomy: C.bicepsShort},
+    'Curl Scott en máquina': {anatomy: C.bicepsShort},
+    'Curl en polea con barra recta': {anatomy: C.biceps},
+    'Curl araña': {anatomy: C.biceps},
+    'Drag curl': {anatomy: C.biceps},
 
-    // Tríceps.
+    // Tríceps. Las variantes sobre cabeza usan cabeza larga; empujes y fondos
+    // reutilizan el mapa general o lateral/medial según el patrón.
     'Extensión de tríceps con cuerda': {thumb: P('extension-de-triceps-con-cuerda.webp'), anatomy: C.tricepsLateral},
     'Extensión de tríceps con barra recta': {thumb: P('extension-de-triceps-con-barra-recta.webp'), anatomy: C.tricepsLateral},
+    'Extensión de tríceps con barra V': {anatomy: C.tricepsLateral},
     'Extensión de tríceps sobre cabeza con cuerda': {anatomy: C.tricepsLong},
     'Extensión sobre cabeza con mancuerna': {thumb: P('extension-sobre-cabeza-con-mancuerna.webp'), anatomy: C.tricepsLong},
+    'Extensión unilateral sobre cabeza': {anatomy: C.tricepsLong},
     'Press francés con barra EZ': {thumb: P('press-frances-con-barra-ez.webp'), anatomy: C.triceps},
+    'Press de banca agarre cerrado': {anatomy: C.triceps},
+    'Fondos enfocados a tríceps': {anatomy: C.triceps},
+    'Fondos en máquina': {anatomy: C.triceps},
+    'Extensión unilateral en polea': {anatomy: C.triceps},
+    'Extensión cruzada en polea': {anatomy: C.triceps},
+    'Patada de tríceps con mancuerna': {anatomy: C.triceps},
+    'Patada de tríceps en polea': {anatomy: C.triceps},
+    'JM press': {anatomy: C.triceps},
 
-    // Pierna.
+    // Cuádriceps. Todos comparten cuádriceps como objetivo primario del catálogo.
+    'Sentadilla trasera high bar': {anatomy: C.quads},
+    'Sentadilla frontal': {anatomy: C.quads},
     'Sentadilla hack': {thumb: P('sentadilla-hack.webp'), anatomy: C.quads},
+    'Sentadilla pendular': {anatomy: C.quads},
+    'Sentadilla en Smith': {anatomy: C.quads},
     'Prensa inclinada 45°': {thumb: P('prensa-inclinada-45.webp'), anatomy: C.quads},
+    'Prensa horizontal': {anatomy: C.quads},
     'Extensión de cuádriceps': {thumb: P('extension-de-cuadriceps.webp'), anatomy: C.quads},
+    'Extensión unilateral de cuádriceps': {anatomy: C.quads},
+    'Sentadilla búlgara enfoque cuádriceps': {anatomy: C.quads},
+    'Zancada hacia atrás': {anatomy: C.quads},
+    'Zancadas caminando': {anatomy: C.quads},
+    'Step-up': {anatomy: C.quads},
+    'Sissy squat': {anatomy: C.quads},
+    'Sentadilla goblet': {anatomy: C.quads},
+    'Belt squat': {anatomy: C.quads},
+
+    // Cadena posterior: sólo se reutiliza isquiotibial/glúteo medio cuando el
+    // objetivo primario coincide. Glúteo mayor, aductores y erectores quedan
+    // pendientes de anatomías propias para no marcar músculos incorrectos.
+    'Peso muerto rumano con barra': {anatomy: C.hamstrings},
+    'Peso muerto rumano con mancuernas': {anatomy: C.hamstrings},
+    'Buenos días': {anatomy: C.hamstrings},
+    'Curl femoral sentado': {anatomy: C.hamstrings},
     'Curl femoral tumbado': {thumb: P('curl-femoral-tumbado.webp'), anatomy: C.hamstrings},
-    'Abducción de cadera en máquina': {thumb: P('abduccion-de-cadera-en-maquina.webp'), anatomy: C.gluteMed}
+    'Curl femoral de pie': {anatomy: C.hamstrings},
+    'Curl nórdico': {anatomy: C.hamstrings},
+    'Abducción de cadera en máquina': {thumb: P('abduccion-de-cadera-en-maquina.webp'), anatomy: C.gluteMed},
+    'Abducción de cadera en polea': {anatomy: C.gluteMed},
+    'Peso muerto rumano unilateral': {anatomy: C.hamstrings}
   });
 
   // Nombres antiguos de las rutinas: sólo resuelven arte visual; no cambian ex.name ni ex.image.
