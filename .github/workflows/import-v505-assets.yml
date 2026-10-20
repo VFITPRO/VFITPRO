@@ -11,16 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Reconstruct and validate premium asset bundle
+      - name: Download and validate premium asset bundle
         shell: bash
+        env:
+          ASSET_URL: 'https://sdmntprpolandcentral.oaiusercontent.com/files/00000000-b6c8-820a-bfb9-b6982274da13/raw?se=2026-10-20T01%3A02%3A31Z&sp=r&sv=2026-02-06&sr=b&scid=20da2811-3950-59ac-897a-719f8a6e634d&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-19T22%3A56%3A19Z&ske=2026-10-20T22%3A56%3A19Z&sks=b&skv=2026-02-06&sig=f1NcLi0BRCt80k3wPmKPKApdS6YyKxb3NYKRyFb3a9w%3D'
         run: |
           set -euo pipefail
-          if [ ! -f .tmp-v505/READY ]; then
-            echo 'No READY marker; nothing to import.'
-            exit 0
-          fi
-          test "$(find .tmp-v505 -maxdepth 1 -name 'part-*' -type f | wc -l)" -eq 34
-          cat .tmp-v505/part-* | base64 -d > /tmp/v505-premium-assets.zip
+          test -f .tmp-v505/READY
+          curl --fail --location --retry 3 --retry-delay 2 "$ASSET_URL" -o /tmp/v505-premium-assets.zip
           echo 'ba42cd8e60203463db99d668b414a27594746082be072277dec1ee2f12e28f57  /tmp/v505-premium-assets.zip' | sha256sum -c -
           unzip -oq /tmp/v505-premium-assets.zip -d .
           python - <<'PY'
@@ -40,7 +38,7 @@ jobs:
               assert d[:4]==b'RIFF' and d[8:12]==b'WEBP', name
               print('OK', name, len(d))
           PY
-      - name: Commit reconstructed assets and remove transport chunks
+      - name: Commit verified assets and remove temporary importer
         shell: bash
         run: |
           set -euo pipefail
