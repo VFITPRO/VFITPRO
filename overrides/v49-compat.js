@@ -6,6 +6,7 @@
     if(!Number.isInteger(activeDay)||!routines[activeDay])activeDay=0;
     const list=routines[activeDay]?.ex;
     if(!Array.isArray(list)||!list.length){activeEx=0;return;}
+    if(!Number.isInteger(activeDay)||!routines[activeDay])activeDay=0;
     if(!Number.isInteger(activeEx)||!list[activeEx])activeEx=0;
   }
   const beforeDays=renderDays;
@@ -18,7 +19,7 @@
 
   // V50 premium artwork loader. Only visual fields change; V49 identity keys remain intact.
   const premium=document.createElement('script');
-  premium.src='v50-premium-art.js?v=505';
+  premium.src='v50-premium-art.js?v=506';
   premium.async=false;
   premium.onload=()=>{
     try{
