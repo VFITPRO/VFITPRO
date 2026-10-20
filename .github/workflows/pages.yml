@@ -19,17 +19,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Extract and validate application
+        shell: bash
         run: |
           set -euo pipefail
           mkdir -p public
           unzip -q VFIT_PRO_PREMIUM_V14.zip -d public
           cp -R overrides/. public/
 
-          # Force the current loader URL in the actually published HTML.
-          sed -i 's#v49-compat.js?v=[0-9]*#v49-compat.js?v=505#g' public/index.html
-          grep -q 'v49-compat.js?v=505' public/index.html
-          grep -q "v50-premium-art.js?v=505" public/v49-compat.js
-
+          sed -i 's#v49-compat.js?v=[0-9]*#v49-compat.js?v=506#g' public/index.html
+          grep -q 'v49-compat.js?v=506' public/index.html
+          grep -q "v50-premium-art.js?v=506" public/v49-compat.js
           node --check public/v49-compat.js
           node --check public/v50-premium-art.js
           node --check public/sw.js
@@ -40,61 +39,41 @@ jobs:
           photos = Path('public/assets/exercises/premium')
           anatomy = Path('public/assets/anatomy/premium')
           expected_photos = {
-              'press-de-banca-con-barra.webp',
-              'press-inclinado-con-barra.webp',
-              'press-declinado-con-barra.webp',
-              'press-plano-con-mancuernas.webp',
-              'press-inclinado-con-mancuernas.webp',
-              'press-de-pecho-en-maquina.webp',
-              'press-convergente-de-pecho.webp',
-              'press-de-banca-en-smith.webp',
-              'press-inclinado-en-smith.webp',
-              'aperturas-con-mancuernas.webp',
-              'aperturas-inclinadas-con-mancuernas.webp',
-              'cruce-de-poleas-medio.webp',
-              'cruce-de-poleas-de-abajo-arriba.webp',
-              'cruce-de-poleas-de-arriba-abajo.webp',
-              'pec-deck.webp',
-              'fondos-enfocados-a-pecho.webp',
-              'flexiones.webp',
-              'flexiones-lastradas.webp',
-              'press-landmine-unilateral.webp',
-              'remo-curvado-con-barra.webp',
-              'remo-unilateral-con-mancuerna.webp',
-              'remo-seal.webp',
-              'jalon-al-pecho-agarre-neutro.webp',
-              'jalon-al-pecho-agarre-ancho.webp',
-              'remo-sentado-en-polea-agarre-neutro.webp',
-              'remo-sentado-en-polea-agarre-ancho.webp',
-              'remo-en-maquina-convergente.webp',
-              'remo-unilateral-en-polea.webp',
+              'press-de-banca-con-barra.webp','press-inclinado-con-barra.webp','press-declinado-con-barra.webp',
+              'press-plano-con-mancuernas.webp','press-inclinado-con-mancuernas.webp','press-de-pecho-en-maquina.webp',
+              'press-convergente-de-pecho.webp','press-de-banca-en-smith.webp','press-inclinado-en-smith.webp',
+              'aperturas-con-mancuernas.webp','aperturas-inclinadas-con-mancuernas.webp','cruce-de-poleas-medio.webp',
+              'cruce-de-poleas-de-abajo-arriba.webp','cruce-de-poleas-de-arriba-abajo.webp','pec-deck.webp',
+              'fondos-enfocados-a-pecho.webp','flexiones.webp','flexiones-lastradas.webp','press-landmine-unilateral.webp',
+              'remo-curvado-con-barra.webp','remo-unilateral-con-mancuerna.webp','remo-seal.webp',
+              'jalon-al-pecho-agarre-neutro.webp','jalon-al-pecho-agarre-ancho.webp',
+              'remo-sentado-en-polea-agarre-neutro.webp','remo-sentado-en-polea-agarre-ancho.webp',
+              'remo-en-maquina-convergente.webp','remo-unilateral-en-polea.webp',
+              'press-de-hombro-con-mancuernas.webp','elevacion-lateral-con-mancuernas.webp','elevacion-frontal-con-mancuernas.webp',
+              'curl-con-barra-recta.webp','curl-alterno-con-mancuernas.webp','curl-scott-con-barra-ez.webp',
+              'extension-de-triceps-con-barra-recta.webp','extension-sobre-cabeza-con-mancuerna.webp','press-frances-con-barra-ez.webp',
+              'sentadilla-hack.webp','prensa-inclinada-45.webp','extension-de-cuadriceps.webp','curl-femoral-tumbado.webp',
           }
           expected_anatomy = {
-              'muscle-pectoral-medio.webp',
-              'muscle-pectoral-superior.webp',
-              'muscle-pectoral-inferior.webp',
-              'muscle-pectoral-mayor.webp',
-              'muscle-press-landmine-unilateral.webp',
-              'muscle-remo-curvado-con-barra.webp',
-              'muscle-remo-unilateral-con-mancuerna.webp',
-              'muscle-remo-sentado-en-polea-agarre-neutro.webp',
+              'muscle-pectoral-medio.webp','muscle-pectoral-superior.webp','muscle-pectoral-inferior.webp','muscle-pectoral-mayor.webp',
+              'muscle-press-landmine-unilateral.webp','muscle-remo-curvado-con-barra.webp',
+              'muscle-remo-unilateral-con-mancuerna.webp','muscle-remo-sentado-en-polea-agarre-neutro.webp',
+              'muscle-deltoides-lateral.webp','muscle-biceps-cabeza-corta.webp','muscle-triceps.webp',
+              'muscle-cuadriceps.webp','muscle-isquiotibiales.webp','muscle-gluteo-medio.webp',
           }
-
           actual_photos = {p.name for p in photos.glob('*.webp')}
           actual_anatomy = {p.name for p in anatomy.glob('*.webp')}
           missing = (expected_photos - actual_photos) | (expected_anatomy - actual_anatomy)
           assert not missing, f'Missing premium assets: {sorted(missing)}'
-
           for path in photos.glob('*.webp'):
               data = path.read_bytes()
               assert len(data) > 100_000, f'Truncated premium photo: {path} ({len(data)} bytes)'
               assert data[:4] == b'RIFF' and data[8:12] == b'WEBP', f'Invalid WebP: {path}'
-              print(f'OK PHOTO {path} {len(data)} bytes')
           for path in anatomy.glob('*.webp'):
               data = path.read_bytes()
               assert len(data) > 50_000, f'Truncated premium anatomy: {path} ({len(data)} bytes)'
               assert data[:4] == b'RIFF' and data[8:12] == b'WEBP', f'Invalid WebP: {path}'
-              print(f'OK ANATOMY {path} {len(data)} bytes')
+          print('LOCAL PREMIUM ASSETS VERIFIED', len(expected_photos), len(expected_anatomy))
           PY
 
           test -f public/index.html
@@ -115,27 +94,26 @@ jobs:
         run: |
           set -euo pipefail
           BASE="${PAGE_URL%/}/"
-          mkdir -p live-check/photos live-check/anatomy
+          curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors -H 'Cache-Control: no-cache' \
+            "${BASE}?verify=${GITHUB_SHA}" -o /tmp/index.html
+          grep -q 'v49-compat.js?v=506' /tmp/index.html
 
-          curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors \
-            -H 'Cache-Control: no-cache' "${BASE}?verify=${GITHUB_SHA}" -o live-check/index.html
-          grep -q 'v49-compat.js?v=505' live-check/index.html
+          curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors -H 'Cache-Control: no-cache' \
+            "${BASE}v49-compat.js?v=506&verify=${GITHUB_SHA}" -o /tmp/v49-compat.js
+          grep -q 'v50-premium-art.js?v=506' /tmp/v49-compat.js
 
-          curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors \
-            -H 'Cache-Control: no-cache' "${BASE}v49-compat.js?v=505&verify=${GITHUB_SHA}" -o live-check/v49-compat.js
-          grep -q 'v50-premium-art.js?v=505' live-check/v49-compat.js
-
-          curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors \
-            -H 'Cache-Control: no-cache' "${BASE}v50-premium-art.js?v=505&verify=${GITHUB_SHA}" -o live-check/v50-premium-art.js
-          grep -q "'Press landmine unilateral'" live-check/v50-premium-art.js
-          grep -q "'Remo curvado con barra'" live-check/v50-premium-art.js
-          grep -q "'Remo unilateral con mancuerna'" live-check/v50-premium-art.js
-          grep -q "'Remo unilateral en polea'" live-check/v50-premium-art.js
+          curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors -H 'Cache-Control: no-cache' \
+            "${BASE}v50-premium-art.js?v=506&verify=${GITHUB_SHA}" -o /tmp/v50-premium-art.js
+          grep -q "'Press landmine unilateral'" /tmp/v50-premium-art.js
+          grep -q "'Remo curvado con barra'" /tmp/v50-premium-art.js
+          grep -q "'Press de hombro con mancuernas'" /tmp/v50-premium-art.js
+          grep -q "'Curl Scott con barra EZ'" /tmp/v50-premium-art.js
+          grep -q "'Prensa inclinada 45°'" /tmp/v50-premium-art.js
+          grep -q "'Curl femoral tumbado'" /tmp/v50-premium-art.js
 
           python - <<'PY'
           from urllib.request import Request, urlopen
           import os, time
-
           base = os.environ['PAGE_URL'].rstrip('/') + '/'
           sha = os.environ['GITHUB_SHA']
           photos = [
@@ -148,39 +126,40 @@ jobs:
               'remo-curvado-con-barra.webp','remo-unilateral-con-mancuerna.webp','remo-seal.webp',
               'jalon-al-pecho-agarre-neutro.webp','jalon-al-pecho-agarre-ancho.webp',
               'remo-sentado-en-polea-agarre-neutro.webp','remo-sentado-en-polea-agarre-ancho.webp',
-              'remo-en-maquina-convergente.webp','remo-unilateral-en-polea.webp'
+              'remo-en-maquina-convergente.webp','remo-unilateral-en-polea.webp',
+              'press-de-hombro-con-mancuernas.webp','elevacion-lateral-con-mancuernas.webp','elevacion-frontal-con-mancuernas.webp',
+              'curl-con-barra-recta.webp','curl-alterno-con-mancuernas.webp','curl-scott-con-barra-ez.webp',
+              'extension-de-triceps-con-barra-recta.webp','extension-sobre-cabeza-con-mancuerna.webp','press-frances-con-barra-ez.webp',
+              'sentadilla-hack.webp','prensa-inclinada-45.webp','extension-de-cuadriceps.webp','curl-femoral-tumbado.webp'
           ]
           anatomy = [
-              'muscle-pectoral-medio.webp','muscle-pectoral-superior.webp',
-              'muscle-pectoral-inferior.webp','muscle-pectoral-mayor.webp',
+              'muscle-pectoral-medio.webp','muscle-pectoral-superior.webp','muscle-pectoral-inferior.webp','muscle-pectoral-mayor.webp',
               'muscle-press-landmine-unilateral.webp','muscle-remo-curvado-con-barra.webp',
-              'muscle-remo-unilateral-con-mancuerna.webp','muscle-remo-sentado-en-polea-agarre-neutro.webp'
+              'muscle-remo-unilateral-con-mancuerna.webp','muscle-remo-sentado-en-polea-agarre-neutro.webp',
+              'muscle-deltoides-lateral.webp','muscle-biceps-cabeza-corta.webp','muscle-triceps.webp',
+              'muscle-cuadriceps.webp','muscle-isquiotibiales.webp','muscle-gluteo-medio.webp'
           ]
-
           def fetch(url):
               last = None
-              for attempt in range(8):
+              for _ in range(8):
                   try:
                       req = Request(url, headers={'Cache-Control':'no-cache','User-Agent':'VFIT-Pages-Smoke-Test'})
                       with urlopen(req, timeout=30) as r:
                           data = r.read()
-                          if r.status != 200:
-                              raise RuntimeError(f'HTTP {r.status}')
+                          if r.status != 200: raise RuntimeError(f'HTTP {r.status}')
                           return data
                   except Exception as exc:
                       last = exc
                       time.sleep(2)
               raise last
-
           for folder, names, minimum in [
               ('assets/exercises/premium', photos, 100_000),
               ('assets/anatomy/premium', anatomy, 50_000),
           ]:
               for name in names:
-                  url = f'{base}{folder}/{name}?v=505&verify={sha}'
+                  url = f'{base}{folder}/{name}?v=506&verify={sha}'
                   data = fetch(url)
                   assert len(data) > minimum, f'Live asset truncated: {url} ({len(data)} bytes)'
                   assert data[:4] == b'RIFF' and data[8:12] == b'WEBP', f'Live asset invalid: {url}'
-                  print(f'LIVE OK {name} {len(data)} bytes')
           print('PUBLIC VFIT PRO VERIFIED:', base)
           PY
