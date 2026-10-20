@@ -62,8 +62,12 @@
     'Remo en máquina convergente': {thumb: P('remo-en-maquina-convergente.webp'), anatomy: B.row},
     'Remo unilateral en polea': {thumb: P('remo-unilateral-en-polea.webp'), anatomy: B.unilateral},
 
-    // Lote recuperado de Work: fotografías individuales validadas y anatomías reutilizadas sólo cuando son precisas.
+    // Hombro. Fotos recuperadas y reutilizadas; anatomía sólo cuando ya existe una vista precisa.
+    'Press militar con barra': {thumb: P('press-militar-con-barra.webp')},
+    'Press militar sentado con barra': {thumb: P('press-militar-sentado-con-barra.webp')},
     'Press de hombro con mancuernas': {thumb: P('press-de-hombro-con-mancuernas.webp')},
+    'Press de hombro en máquina': {thumb: P('press-de-hombro-en-maquina.webp')},
+    'Press de hombro en Smith': {thumb: P('press-de-hombro-en-smith.webp')},
     'Elevación lateral con mancuernas': {thumb: P('elevacion-lateral-con-mancuernas.webp'), anatomy: C.lateralDeltoid},
     'Elevación frontal con mancuernas': {thumb: P('elevacion-frontal-con-mancuernas.webp')},
 
@@ -80,7 +84,7 @@
     'Extensión de cuádriceps': {thumb: P('extension-de-cuadriceps.webp'), anatomy: C.quads},
 
     'Curl femoral tumbado': {thumb: P('curl-femoral-tumbado.webp'), anatomy: C.hamstrings},
-    'Abducción de cadera en máquina': {anatomy: C.gluteMed}
+    'Abducción de cadera en máquina': {thumb: P('abduccion-de-cadera-en-maquina.webp'), anatomy: C.gluteMed}
   });
 
   let applied = 0;
