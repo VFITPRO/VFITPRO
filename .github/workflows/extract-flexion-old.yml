@@ -1,0 +1,29 @@
+name: Inspect existing flexion artwork
+on:
+  push:
+    branches: [v510-flexion-salvage]
+    paths:
+      - '.github/workflows/extract-flexion-old.yml'
+permissions:
+  contents: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract existing Day 3 flexion artwork
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/vfit-base /tmp/flexion-check
+          mkdir -p /tmp/vfit-base /tmp/flexion-check
+          unzip -q VFIT_PRO_PREMIUM_V14.zip -d /tmp/vfit-base
+          cp /tmp/vfit-base/assets/exercise/d3_flexion-de-cadera.jpg /tmp/flexion-check/
+          cp /tmp/vfit-base/assets/anatomy/d3_flexion-de-cadera.jpg /tmp/flexion-check/
+          file /tmp/flexion-check/*
+          ls -lh /tmp/flexion-check/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: flexion-existing-artwork
+          path: /tmp/flexion-check
+          if-no-files-found: error
