@@ -14,7 +14,7 @@ jobs:
       - name: Download and validate V506 asset bundle
         shell: bash
         env:
-          ASSET_URL: '__SIGNED_URL__'
+          ASSET_URL: 'https://sdmntpritalynorth.oaiusercontent.com/files/00000000-de3c-8246-8227-4d61ef204d84/raw?se=2026-10-20T01%3A06%3A24Z&sp=r&sv=2026-02-06&sr=b&scid=37318b72-a349-5c76-8c14-2ee384dd33c5&skoid=002823aa-689d-47ca-9347-108c20f4f00d&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2026-10-19T23%3A09%3A07Z&ske=2026-10-20T23%3A09%3A07Z&sks=b&skv=2026-02-06&sig=if0cqmUro0fKR0ZkAllFHA/mx/hcxM%2Bu4gg41lYmIM4%3D'
         run: |
           set -euo pipefail
           test -f .tmp-v506/READY
