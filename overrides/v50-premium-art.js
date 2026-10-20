@@ -22,6 +22,10 @@
   });
   const C = Object.freeze({
     lateralDeltoid: M('muscle-deltoides-lateral.webp'),
+    deltoidGeneral: M('muscle-deltoides-general.webp'),
+    deltoidAnterior: M('muscle-deltoides-anterior.webp'),
+    deltoidPosterior: M('muscle-deltoides-posterior.webp'),
+    deltoidTrap: M('muscle-deltoides-trapecio.webp'),
     bicepsShort: M('muscle-biceps-cabeza-corta.webp'),
     triceps: M('muscle-triceps.webp'),
     quads: M('muscle-cuadriceps.webp'),
@@ -62,14 +66,25 @@
     'Remo en máquina convergente': {thumb: P('remo-en-maquina-convergente.webp'), anatomy: B.row},
     'Remo unilateral en polea': {thumb: P('remo-unilateral-en-polea.webp'), anatomy: B.unilateral},
 
-    // Hombro. Fotos recuperadas y reutilizadas; anatomía sólo cuando ya existe una vista precisa.
-    'Press militar con barra': {thumb: P('press-militar-con-barra.webp')},
-    'Press militar sentado con barra': {thumb: P('press-militar-sentado-con-barra.webp')},
-    'Press de hombro con mancuernas': {thumb: P('press-de-hombro-con-mancuernas.webp')},
-    'Press de hombro en máquina': {thumb: P('press-de-hombro-en-maquina.webp')},
-    'Press de hombro en Smith': {thumb: P('press-de-hombro-en-smith.webp')},
+    // Hombro. Reutiliza anatomías sólo cuando el patrón muscular principal coincide.
+    'Press militar con barra': {thumb: P('press-militar-con-barra.webp'), anatomy: C.deltoidGeneral},
+    'Press militar sentado con barra': {thumb: P('press-militar-sentado-con-barra.webp'), anatomy: C.deltoidGeneral},
+    'Press de hombro con mancuernas': {thumb: P('press-de-hombro-con-mancuernas.webp'), anatomy: C.deltoidGeneral},
+    'Press Arnold': {thumb: P('press-arnold.webp'), anatomy: C.deltoidGeneral},
+    'Press de hombro en máquina': {thumb: P('press-de-hombro-en-maquina.webp'), anatomy: C.deltoidGeneral},
+    'Press de hombro en Smith': {thumb: P('press-de-hombro-en-smith.webp'), anatomy: C.deltoidGeneral},
     'Elevación lateral con mancuernas': {thumb: P('elevacion-lateral-con-mancuernas.webp'), anatomy: C.lateralDeltoid},
-    'Elevación frontal con mancuernas': {thumb: P('elevacion-frontal-con-mancuernas.webp')},
+    'Elevación lateral en polea': {thumb: P('elevacion-lateral-en-polea.webp'), anatomy: C.lateralDeltoid},
+    'Elevación lateral en máquina': {anatomy: C.lateralDeltoid},
+    'Elevación lateral inclinada en polea': {anatomy: C.lateralDeltoid},
+    'Elevación frontal con mancuernas': {thumb: P('elevacion-frontal-con-mancuernas.webp'), anatomy: C.deltoidAnterior},
+    'Elevación frontal con disco': {anatomy: C.deltoidAnterior},
+    'Elevación frontal en polea': {anatomy: C.deltoidAnterior},
+    'Pec deck inverso': {thumb: P('pec-deck-inverso.webp'), anatomy: C.deltoidPosterior},
+    'Pájaros con mancuernas': {thumb: P('pajaros-con-mancuernas.webp'), anatomy: C.deltoidPosterior},
+    'Apertura posterior en polea': {anatomy: C.deltoidPosterior},
+    'Face pull': {thumb: P('face-pull.webp'), anatomy: C.deltoidPosterior},
+    // El asset recuperado de remo al mentón se conserva como respaldo, pero no se mapea porque el catálogo exige barra EZ.
 
     'Curl con barra recta': {thumb: P('curl-con-barra-recta.webp')},
     'Curl alterno con mancuernas': {thumb: P('curl-alterno-con-mancuernas.webp')},
