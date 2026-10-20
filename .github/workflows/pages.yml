@@ -27,10 +27,11 @@ jobs:
           unzip -q VFIT_PRO_PREMIUM_V14.zip -d public
           cp -R overrides/. public/
 
-          sed -i 's#v49-compat.js?v=[0-9]*#v49-compat.js?v=510#g' public/index.html
-          grep -q 'v49-compat.js?v=510' public/index.html
+          sed -i 's#v49-compat.js?v=[0-9]*#v49-compat.js?v=511#g' public/index.html
+          grep -q 'v49-compat.js?v=511' public/index.html
           grep -q "v50-premium-art.js?v=509" public/v49-compat.js
-          grep -q 'VFITWorkoutControlsV510' public/v49-compat.js
+          grep -q 'VFITWorkoutControlsV511' public/v49-compat.js
+          grep -q 'Terminar sin guardar' public/v49-compat.js
           grep -q "const VERSION = '?v=509'" public/v50-premium-art.js
           grep -q "'Press de banca': 'Press de banca con barra'" public/v50-premium-art.js
           grep -q "'Extensión de tríceps al frente'" public/v50-premium-art.js
@@ -93,11 +94,12 @@ jobs:
           BASE="${PAGE_URL%/}/"
           curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors -H 'Cache-Control: no-cache' \
             "${BASE}?verify=${GITHUB_SHA}" -o /tmp/index.html
-          grep -q 'v49-compat.js?v=510' /tmp/index.html
+          grep -q 'v49-compat.js?v=511' /tmp/index.html
 
           curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors -H 'Cache-Control: no-cache' \
-            "${BASE}v49-compat.js?v=510&verify=${GITHUB_SHA}" -o /tmp/v49-compat.js
-          grep -q 'VFITWorkoutControlsV510' /tmp/v49-compat.js
+            "${BASE}v49-compat.js?v=511&verify=${GITHUB_SHA}" -o /tmp/v49-compat.js
+          grep -q 'VFITWorkoutControlsV511' /tmp/v49-compat.js
+          grep -q 'Terminar sin guardar' /tmp/v49-compat.js
           grep -q 'v50-premium-art.js?v=509' /tmp/v49-compat.js
 
           curl --fail --location --retry 8 --retry-delay 2 --retry-all-errors -H 'Cache-Control: no-cache' \
@@ -139,5 +141,5 @@ jobs:
               data = fetch(url)
               assert len(data) > minimum, f'Live asset truncated: {url} ({len(data)} bytes)'
               assert data[:4] == b'RIFF' and data[8:12] == b'WEBP', f'Live asset invalid: {url}'
-          print('PUBLIC VFIT PRO V510 CONTROLS VERIFIED:', base)
+          print('PUBLIC VFIT PRO V511 WORKOUT FINISH VERIFIED:', base)
           PY
