@@ -18,12 +18,12 @@ jobs:
           rm -rf /tmp/vfit-base /tmp/flexion-check
           mkdir -p /tmp/vfit-base /tmp/flexion-check
           unzip -q VFIT_PRO_PREMIUM_V14.zip -d /tmp/vfit-base
-          cp /tmp/vfit-base/assets/exercise/d3_flexion-de-cadera.jpg /tmp/flexion-check/
-          cp /tmp/vfit-base/assets/anatomy/d3_flexion-de-cadera.jpg /tmp/flexion-check/
+          cp /tmp/vfit-base/assets/exercise/d3_flexion-de-cadera.jpg /tmp/flexion-check/flexion-exercise.jpg
+          cp /tmp/vfit-base/assets/anatomy/d3_flexion-de-cadera.jpg /tmp/flexion-check/flexion-anatomy.jpg
           file /tmp/flexion-check/*
           ls -lh /tmp/flexion-check/*
       - uses: actions/upload-artifact@v4
         with:
-          name: flexion-existing-artwork
+          name: flexion-existing-artwork-v2
           path: /tmp/flexion-check
           if-no-files-found: error
