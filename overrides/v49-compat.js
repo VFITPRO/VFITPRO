@@ -6,7 +6,6 @@
     if(!Number.isInteger(activeDay)||!routines[activeDay])activeDay=0;
     const list=routines[activeDay]?.ex;
     if(!Array.isArray(list)||!list.length){activeEx=0;return;}
-    if(!Number.isInteger(activeDay)||!routines[activeDay])activeDay=0;
     if(!Number.isInteger(activeEx)||!list[activeEx])activeEx=0;
   }
   const beforeDays=renderDays;
