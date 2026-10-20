@@ -5,7 +5,7 @@
 
   const ROOT = 'assets/exercises/premium/';
   const ANATOMY_ROOT = 'assets/anatomy/premium/';
-  const VERSION = '?v=505';
+  const VERSION = '?v=506';
   const P = file => ROOT + file + VERSION;
   const M = file => ANATOMY_ROOT + file + VERSION;
   const A = Object.freeze({
@@ -19,6 +19,14 @@
     row: M('muscle-remo-curvado-con-barra.webp'),
     unilateral: M('muscle-remo-unilateral-con-mancuerna.webp'),
     cableNeutral: M('muscle-remo-sentado-en-polea-agarre-neutro.webp')
+  });
+  const C = Object.freeze({
+    lateralDeltoid: M('muscle-deltoides-lateral.webp'),
+    bicepsShort: M('muscle-biceps-cabeza-corta.webp'),
+    triceps: M('muscle-triceps.webp'),
+    quads: M('muscle-cuadriceps.webp'),
+    hamstrings: M('muscle-isquiotibiales.webp'),
+    gluteMed: M('muscle-gluteo-medio.webp')
   });
 
   const PREMIUM = Object.freeze({
@@ -52,7 +60,27 @@
     'Remo sentado en polea agarre neutro': {thumb: P('remo-sentado-en-polea-agarre-neutro.webp'), anatomy: B.cableNeutral},
     'Remo sentado en polea agarre ancho': {thumb: P('remo-sentado-en-polea-agarre-ancho.webp'), anatomy: B.row},
     'Remo en máquina convergente': {thumb: P('remo-en-maquina-convergente.webp'), anatomy: B.row},
-    'Remo unilateral en polea': {thumb: P('remo-unilateral-en-polea.webp'), anatomy: B.unilateral}
+    'Remo unilateral en polea': {thumb: P('remo-unilateral-en-polea.webp'), anatomy: B.unilateral},
+
+    // Lote recuperado de Work: fotografías individuales validadas y anatomías reutilizadas sólo cuando son precisas.
+    'Press de hombro con mancuernas': {thumb: P('press-de-hombro-con-mancuernas.webp')},
+    'Elevación lateral con mancuernas': {thumb: P('elevacion-lateral-con-mancuernas.webp'), anatomy: C.lateralDeltoid},
+    'Elevación frontal con mancuernas': {thumb: P('elevacion-frontal-con-mancuernas.webp')},
+
+    'Curl con barra recta': {thumb: P('curl-con-barra-recta.webp')},
+    'Curl alterno con mancuernas': {thumb: P('curl-alterno-con-mancuernas.webp')},
+    'Curl Scott con barra EZ': {thumb: P('curl-scott-con-barra-ez.webp'), anatomy: C.bicepsShort},
+
+    'Extensión de tríceps con barra recta': {thumb: P('extension-de-triceps-con-barra-recta.webp')},
+    'Extensión sobre cabeza con mancuerna': {thumb: P('extension-sobre-cabeza-con-mancuerna.webp')},
+    'Press francés con barra EZ': {thumb: P('press-frances-con-barra-ez.webp'), anatomy: C.triceps},
+
+    'Sentadilla hack': {thumb: P('sentadilla-hack.webp'), anatomy: C.quads},
+    'Prensa inclinada 45°': {thumb: P('prensa-inclinada-45.webp'), anatomy: C.quads},
+    'Extensión de cuádriceps': {thumb: P('extension-de-cuadriceps.webp'), anatomy: C.quads},
+
+    'Curl femoral tumbado': {thumb: P('curl-femoral-tumbado.webp'), anatomy: C.hamstrings},
+    'Abducción de cadera en máquina': {anatomy: C.gluteMed}
   });
 
   let applied = 0;
