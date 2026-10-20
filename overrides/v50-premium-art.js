@@ -5,9 +5,10 @@
 
   const ROOT = 'assets/exercises/premium/';
   const ANATOMY_ROOT = 'assets/anatomy/premium/';
-  const VERSION = '?v=506';
+  const VERSION = '?v=509';
   const P = file => ROOT + file + VERSION;
   const M = file => ANATOMY_ROOT + file + VERSION;
+
   const A = Object.freeze({
     medio: M('muscle-pectoral-medio.webp'),
     superior: M('muscle-pectoral-superior.webp'),
@@ -18,7 +19,8 @@
   const B = Object.freeze({
     row: M('muscle-remo-curvado-con-barra.webp'),
     unilateral: M('muscle-remo-unilateral-con-mancuerna.webp'),
-    cableNeutral: M('muscle-remo-sentado-en-polea-agarre-neutro.webp')
+    cableNeutral: M('muscle-remo-sentado-en-polea-agarre-neutro.webp'),
+    lat: M('muscle-dorsal-ancho.webp')
   });
   const C = Object.freeze({
     lateralDeltoid: M('muscle-deltoides-lateral.webp'),
@@ -27,7 +29,11 @@
     deltoidPosterior: M('muscle-deltoides-posterior.webp'),
     deltoidTrap: M('muscle-deltoides-trapecio.webp'),
     bicepsShort: M('muscle-biceps-cabeza-corta.webp'),
+    biceps: M('muscle-biceps-braquial.webp'),
     triceps: M('muscle-triceps.webp'),
+    tricepsLateral: M('muscle-triceps-lateral.webp'),
+    tricepsLong: M('muscle-triceps-largo.webp'),
+    tricepsMedial: M('muscle-triceps-medial.webp'),
     quads: M('muscle-cuadriceps.webp'),
     hamstrings: M('muscle-isquiotibiales.webp'),
     gluteMed: M('muscle-gluteo-medio.webp')
@@ -55,12 +61,12 @@
     'Flexiones lastradas': {thumb: P('flexiones-lastradas.webp'), anatomy: A.mayor},
     'Press landmine unilateral': {thumb: P('press-landmine-unilateral.webp'), anatomy: A.landmine},
 
-    // Espalda. Una misma anatomía puede reutilizarse cuando el patrón muscular es equivalente.
+    // Espalda.
     'Remo curvado con barra': {thumb: P('remo-curvado-con-barra.webp'), anatomy: B.row},
     'Remo unilateral con mancuerna': {thumb: P('remo-unilateral-con-mancuerna.webp'), anatomy: B.unilateral},
     'Remo Seal': {thumb: P('remo-seal.webp'), anatomy: B.row},
-    'Jalón al pecho agarre neutro': {thumb: P('jalon-al-pecho-agarre-neutro.webp')},
-    'Jalón al pecho agarre ancho': {thumb: P('jalon-al-pecho-agarre-ancho.webp')},
+    'Jalón al pecho agarre neutro': {thumb: P('jalon-al-pecho-agarre-neutro.webp'), anatomy: B.lat},
+    'Jalón al pecho agarre ancho': {thumb: P('jalon-al-pecho-agarre-ancho.webp'), anatomy: B.lat},
     'Remo sentado en polea agarre neutro': {thumb: P('remo-sentado-en-polea-agarre-neutro.webp'), anatomy: B.cableNeutral},
     'Remo sentado en polea agarre ancho': {thumb: P('remo-sentado-en-polea-agarre-ancho.webp'), anatomy: B.row},
     'Remo en máquina convergente': {thumb: P('remo-en-maquina-convergente.webp'), anatomy: B.row},
@@ -86,24 +92,66 @@
     'Face pull': {thumb: P('face-pull.webp'), anatomy: C.deltoidPosterior},
     // El asset recuperado de remo al mentón se conserva como respaldo, pero no se mapea porque el catálogo exige barra EZ.
 
-    'Curl con barra recta': {thumb: P('curl-con-barra-recta.webp')},
-    'Curl alterno con mancuernas': {thumb: P('curl-alterno-con-mancuernas.webp')},
+    // Bíceps.
+    'Curl con barra recta': {thumb: P('curl-con-barra-recta.webp'), anatomy: C.biceps},
+    'Curl alterno con mancuernas': {thumb: P('curl-alterno-con-mancuernas.webp'), anatomy: C.biceps},
     'Curl Scott con barra EZ': {thumb: P('curl-scott-con-barra-ez.webp'), anatomy: C.bicepsShort},
 
-    'Extensión de tríceps con barra recta': {thumb: P('extension-de-triceps-con-barra-recta.webp')},
-    'Extensión sobre cabeza con mancuerna': {thumb: P('extension-sobre-cabeza-con-mancuerna.webp')},
+    // Tríceps.
+    'Extensión de tríceps con cuerda': {thumb: P('extension-de-triceps-con-cuerda.webp'), anatomy: C.tricepsLateral},
+    'Extensión de tríceps con barra recta': {thumb: P('extension-de-triceps-con-barra-recta.webp'), anatomy: C.tricepsLateral},
+    'Extensión de tríceps sobre cabeza con cuerda': {anatomy: C.tricepsLong},
+    'Extensión sobre cabeza con mancuerna': {thumb: P('extension-sobre-cabeza-con-mancuerna.webp'), anatomy: C.tricepsLong},
     'Press francés con barra EZ': {thumb: P('press-frances-con-barra-ez.webp'), anatomy: C.triceps},
 
+    // Pierna.
     'Sentadilla hack': {thumb: P('sentadilla-hack.webp'), anatomy: C.quads},
     'Prensa inclinada 45°': {thumb: P('prensa-inclinada-45.webp'), anatomy: C.quads},
     'Extensión de cuádriceps': {thumb: P('extension-de-cuadriceps.webp'), anatomy: C.quads},
-
     'Curl femoral tumbado': {thumb: P('curl-femoral-tumbado.webp'), anatomy: C.hamstrings},
     'Abducción de cadera en máquina': {thumb: P('abduccion-de-cadera-en-maquina.webp'), anatomy: C.gluteMed}
   });
 
+  // Nombres antiguos de las rutinas: sólo resuelven arte visual; no cambian ex.name ni ex.image.
+  const ALIASES = Object.freeze({
+    'Press de banca': 'Press de banca con barra',
+    'Aperturas en polea': 'Cruce de poleas medio',
+    'Extensión de tríceps en polea': 'Extensión de tríceps con cuerda',
+    'Extensión de tríceps sobre la cabeza': 'Extensión sobre cabeza con mancuerna',
+    'Press francés': 'Press francés con barra EZ',
+    'Remo curvado': 'Remo curvado con barra',
+    'Remo en polea': 'Remo sentado en polea agarre neutro',
+    'Jalón al pecho': 'Jalón al pecho agarre ancho',
+    'Curl Scott': 'Curl Scott con barra EZ',
+    'Curl con mancuernas': 'Curl alterno con mancuernas',
+    'Abducción de cadera': 'Abducción de cadera en máquina',
+    'Curl femoral': 'Curl femoral tumbado',
+    'Prensa de piernas': 'Prensa inclinada 45°',
+    'Crucifijo invertido': 'Pájaros con mancuernas',
+    'Elevación frontal': 'Elevación frontal con mancuernas',
+    'Elevación lateral': 'Elevación lateral con mancuernas',
+    'Desarrollo de hombro': 'Press de hombro con mancuernas',
+    'Curl en banco Scott': 'Curl Scott con barra EZ'
+  });
+
+  // Ejercicios antiguos que sólo existen en las rutinas históricas.
+  const ROUTINE_ONLY = Object.freeze({
+    'Extensión de tríceps al frente': {
+      thumb: P('extension-de-triceps-al-frente.webp'),
+      anatomy: C.tricepsMedial
+    }
+  });
+
+  const resolve = name => {
+    const key = String(name || '');
+    if (ROUTINE_ONLY[key]) return ROUTINE_ONLY[key];
+    const canonical = ALIASES[key] || key;
+    return PREMIUM[canonical] || null;
+  };
+
   let applied = 0;
   for (const [, ex] of exerciseCatalog) {
+    // Catalog remains exact: aliases are only for legacy routines.
     const art = PREMIUM[String(ex?.name || '')];
     if (!art) continue;
     // Never mutate ex.image: V49 uses it as the stable identity for history,
@@ -118,8 +166,9 @@
   window.VFITPremiumArtV50 = Object.freeze({
     applied,
     names: () => Object.keys(PREMIUM),
-    has: name => Object.prototype.hasOwnProperty.call(PREMIUM, String(name || '')),
-    thumb: name => PREMIUM[String(name || '')]?.thumb || null,
-    anatomy: name => PREMIUM[String(name || '')]?.anatomy || null
+    aliases: () => ({...ALIASES}),
+    has: name => !!resolve(name),
+    thumb: name => resolve(name)?.thumb || null,
+    anatomy: name => resolve(name)?.anatomy || null
   });
 })();
