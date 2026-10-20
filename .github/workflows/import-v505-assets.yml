@@ -19,7 +19,7 @@ jobs:
             echo 'No READY marker; nothing to import.'
             exit 0
           fi
-          test "$(find .tmp-v505 -maxdepth 1 -name 'part-*' -type f | wc -l)" -eq 8
+          test "$(find .tmp-v505 -maxdepth 1 -name 'part-*' -type f | wc -l)" -eq 34
           cat .tmp-v505/part-* | base64 -d > /tmp/v505-premium-assets.zip
           echo 'ba42cd8e60203463db99d668b414a27594746082be072277dec1ee2f12e28f57  /tmp/v505-premium-assets.zip' | sha256sum -c -
           unzip -oq /tmp/v505-premium-assets.zip -d .
