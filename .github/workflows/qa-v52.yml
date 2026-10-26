@@ -1,0 +1,40 @@
+name: VFIT V52 QA
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate JavaScript and safety guards
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --check overrides/v49-compat.js
+          node --check overrides/v52-simple.js
+          node --check scripts/test-v52.cjs
+          node --check scripts/test-v52-browser.cjs
+          grep -q "e.key==='Escape'" overrides/v49-compat.js
+          grep -q "cancel.focus()" overrides/v49-compat.js
+          grep -q "removeFinishDialog(true)" overrides/v49-compat.js
+      - name: Install QA runtime
+        run: |
+          npm install --no-save jsdom@24.1.3 playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Run account and DOM integration tests
+        env:
+          VFIT_JSDOM_PATH: ${{ github.workspace }}/node_modules/jsdom
+        run: node scripts/test-v52.cjs
+      - name: Run mobile browser flow
+        run: node scripts/test-v52-browser.cjs
