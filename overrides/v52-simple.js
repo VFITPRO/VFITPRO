@@ -24,6 +24,73 @@
     if(!node)return;
     node.classList.add('uxOptional');node.classList.toggle('uxFolded',!expanded.has(screenId));
   }
+  function enhanceRegisterRows() {
+    const names={kg:'Peso en kilogramos',reps:'Repeticiones',rir:'RIR',done:'Serie completada'};
+    const rows=[...document.querySelectorAll('#setRows .setRow')];
+    rows.forEach((row,i)=>{
+      const done=row.querySelector('input[data-k="done"]');
+      row.classList.toggle('uxSetDone',!!done?.checked);
+      row.querySelectorAll('input[data-k]').forEach(inp=>{
+        const key=inp.dataset.k;
+        inp.setAttribute('aria-label',`Serie ${i+1}: ${names[key]||key}`);
+        inp.setAttribute('autocomplete','off');
+        if(key==='kg')inp.setAttribute('inputmode','decimal');
+        else if(key==='reps'||key==='rir')inp.setAttribute('inputmode','numeric');
+        if(inp.dataset.uxV52==='1')return;
+        inp.dataset.uxV52='1';
+        if(key==='done')inp.addEventListener('change',()=>row.classList.toggle('uxSetDone',inp.checked));
+        else inp.addEventListener('keydown',e=>{
+          if(e.key!=='Enter')return;
+          e.preventDefault();
+          const fields=[...document.querySelectorAll('#setRows input[type="number"]')];
+          const next=fields[fields.indexOf(inp)+1];
+          if(next){next.focus();if(typeof next.select==='function')next.select();}
+          else inp.blur();
+        });
+      });
+    });
+  }
+  function updatePrimarySaveLabel() {
+    const save=$('register')?.querySelector(':scope > .cta');
+    if(!save)return;
+    const adapted=currentWorkout?.adaptation?.items;
+    const order=Array.isArray(adapted)&&adapted.length?adapted.map(x=>x.index):(routines?.[activeDay]?.ex||[]).map((_,i)=>i);
+    const position=order.indexOf(activeEx);
+    save.textContent=position>=0&&position===order.length-1?'Guardar ejercicio y terminar':'Guardar y siguiente';
+  }
+  function decorateRoutineEditorUX() {
+    const panel=$('editorOverlay')?.querySelector('.optionsPanel');
+    if(!panel)return;
+    panel.classList.add('uxRoutineEditor');
+    if(panel.dataset.uxV52!=='1'){
+      panel.dataset.uxV52='1';
+      const select=[...panel.querySelectorAll(':scope > select')].at(-1);
+      if(select){
+        select.classList.add('uxRoutineAddSelect');
+        if(!select.previousElementSibling?.classList.contains('uxAddLabel')){
+          const label=document.createElement('label');
+          label.className='uxAddLabel';label.textContent='Añadir otro ejercicio';
+          if(!select.id)select.id='uxRoutineAddSelect';label.htmlFor=select.id;
+          panel.insertBefore(label,select);
+        }
+      }
+      for(const row of panel.querySelectorAll(':scope > .profileBlock')){
+        row.classList.add('uxEditorExercise');
+        row.querySelectorAll('button').forEach(b=>{
+          const text=b.textContent.trim();
+          if(text==='Quitar ejercicio')b.classList.add('uxDanger');
+          else if(text.includes('Subir')||text.includes('Bajar'))b.classList.add('uxSecondary');
+        });
+      }
+      [...panel.children].filter(n=>n.tagName==='BUTTON').forEach(b=>{
+        const text=b.textContent.trim();
+        if(text==='+ Añadir ejercicio')b.classList.add('uxEditorAdd');
+        if(text==='+ Crear ejercicio personalizado')b.classList.add('uxEditorCustom');
+      });
+    }
+    const close=[...panel.children].find(n=>n.tagName==='BUTTON'&&n.textContent.trim()==='Cerrar');
+    if(close){close.classList.add('uxEditorClose');panel.append(close);}
+  }
   function layout() {
     for(const id of Object.keys(choices)) {
       document.querySelectorAll('#uxTabs-'+id+' button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.choice===choices[id])));
@@ -31,13 +98,11 @@
     for(const id of ['home','day','exercise','register']) {
       $('uxMore-'+id)?.setAttribute('aria-expanded',String(expanded.has(id)));
     }
-    // Home keeps one primary action; the full program remains one tap away.
     document.querySelectorAll('#home > .homeHelp,#home > .sectionTitle,#homeDays,#v25Smart').forEach(n=>optional(n,'home'));
     const r=choices.routines;
     ['v49Library','v25Library'].forEach(id=>group($(id),'library',r));
     ['v26Program','v49Hub','v45CustomManager'].forEach(id=>group($(id),'edit',r));
     group($('routineDays'),'days',r);
-    // Preserve the actual direct children: legacy renderers rely on their parents.
     for(const n of [...$('progress').children]) {
       if(n.matches('.topbar,.uxTabs'))continue;
       let key=n.matches('.progressGrid,#v24Summary,#v23Weekly')?'summary':'history';
@@ -62,9 +127,9 @@
       if(n.matches('.topbar,.rest,.cta,.uxMore,#v29SessionNav,#v38Super,#v26Warmups') || n.contains($('setRows')))continue;
       optional(n,'register');
     }
-    // Optional helpers inside the existing set table stay attached to it.
     ['v35Quick','v28Legend','v42RegisterGoal'].forEach(id=>optional($(id),'register'));
     optional(register.querySelector('.timerEdit'),'register');
+    enhanceRegisterRows();updatePrimarySaveLabel();decorateRoutineEditorUX();
     const active=document.querySelector('.screen.active')?.id;
     const section=['day','exercise','register'].includes(active)?'routines':active;
     document.querySelectorAll('.bottomNav button').forEach(b=>{
@@ -91,16 +156,15 @@
   start.id='uxStartDay';start.className='cta';$('day').querySelector('.chips').after(start);
   $('register').querySelector('h1').textContent='Registrar series';
   document.querySelectorAll('.topbar > .iconBtn').forEach(b=>{if(!b.hasAttribute('aria-label'))b.setAttribute('aria-label',b.textContent.trim()==='×'?'Volver al ejercicio':'Volver');});
-  // Keep the familiar four destinations, ordered around the workout flow.
   const nav=document.querySelector('.bottomNav');
   ['home','routines','progress','profile'].forEach(id=>nav.append(nav.querySelector(`[data-s="${id}"]`)));
   const beforeShow=show;show=function(id){const result=beforeShow(id);layout();return result;};
-  const beforeSets=renderSets;renderSets=function(){const result=beforeSets();schedule();return result;};
+  const beforeSets=renderSets;renderSets=function(){const result=beforeSets();enhanceRegisterRows();updatePrimarySaveLabel();schedule();return result;};
   const beforeProgress=renderProgress;renderProgress=function(){const result=beforeProgress();schedule();return result;};
   const beforeDays=renderDays;renderDays=function(){const result=beforeDays();schedule();return result;};
-  // New/recreated panels are classified without observing input edits or timer text.
+  const beforeRoutineEditor=openRoutineEditor;openRoutineEditor=function(){const result=beforeRoutineEditor();queueMicrotask(decorateRoutineEditorUX);return result;};
   const observer=new MutationObserver(schedule);
   document.querySelectorAll('.screen').forEach(s=>observer.observe(s,{childList:true}));
-  window.VFITSimpleUX={refresh:layout};
+  window.VFITSimpleUX={refresh:layout,enhanceRegisterRows,decorateRoutineEditor:decorateRoutineEditorUX};
   layout();
 })();
