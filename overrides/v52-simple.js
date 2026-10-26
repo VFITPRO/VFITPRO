@@ -103,6 +103,7 @@
     ['v49Library','v25Library'].forEach(id=>group($(id),'library',r));
     ['v26Program','v49Hub','v45CustomManager'].forEach(id=>group($(id),'edit',r));
     group($('routineDays'),'days',r);
+    group($('uxCreateRoutine'),'days',r);
     for(const n of [...$('progress').children]) {
       if(n.matches('.topbar,.uxTabs'))continue;
       let key=n.matches('.progressGrid,#v24Summary,#v23Weekly')?'summary':'history';
@@ -143,6 +144,15 @@
   tabs('routines',[['days','Mis días'],['library','Biblioteca'],['edit','Organizar']]);
   tabs('progress',[['summary','Resumen'],['history','Historial'],['analysis','Análisis'],['body','Medidas']]);
   tabs('profile',[['account','Cuenta'],['training','Entrenamiento'],['data','Mis datos']]);
+  const createRoutine=button('+ Crear rutina nueva',()=>{
+    const source=$('v49Build');
+    if(source){source.click();return;}
+    choices.routines='edit';layout();
+    queueMicrotask(()=>$('v49Build')?.click());
+  });
+  createRoutine.id='uxCreateRoutine';createRoutine.className='cta';createRoutine.setAttribute('aria-label','Crear una rutina nueva');
+  const routineDays=$('routineDays');
+  if(routineDays)routineDays.before(createRoutine);else $('routines').append(createRoutine);
   fold('home','Plan de hoy y todos mis días');
   fold('day','Ajustar o personalizar rutina');
   fold('exercise','Técnica, músculos y alternativas');
