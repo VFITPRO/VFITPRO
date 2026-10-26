@@ -176,5 +176,9 @@
   const observer=new MutationObserver(schedule);
   document.querySelectorAll('.screen').forEach(s=>observer.observe(s,{childList:true}));
   window.VFITSimpleUX={refresh:layout,enhanceRegisterRows,decorateRoutineEditor:decorateRoutineEditorUX};
+  const universal=document.createElement('script');
+  universal.src='v53-universal-art.js?v=53';universal.async=false;
+  universal.onload=()=>{try{window.VFITUniversalArtV53?.refresh?.();layout();}catch(e){console.warn('V53 universal artwork load skipped',e);}};
+  document.head.appendChild(universal);
   layout();
 })();
