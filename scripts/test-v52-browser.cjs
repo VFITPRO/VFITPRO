@@ -1,6 +1,7 @@
 const {chromium}=require('playwright');
 const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),http=require('node:http');
 const {execFileSync}=require('node:child_process');
+const assert=require('node:assert/strict');
 (async()=>{
  const build=fs.mkdtempSync(path.join(os.tmpdir(),'vfit-browser-'));
  const root=path.resolve(__dirname,'..');
@@ -20,16 +21,23 @@ const {execFileSync}=require('node:child_process');
  await page.goto(`http://127.0.0.1:${server.address().port}`);await page.locator('#accountEmail').fill('qa@example.com');await page.locator('#accountPassword').fill('test-password');await page.locator('#accountForm button[type=submit]').click();await page.waitForFunction(()=>document.body.classList.contains('account-ready'));
  if(process.env.VFIT_QA_OUTPUT)await page.screenshot({path:path.join(process.env.VFIT_QA_OUTPUT,'home.png'),fullPage:true});
  await page.locator('.bottomNav [data-s=routines]').click();if(process.env.VFIT_QA_OUTPUT)await page.screenshot({path:path.join(process.env.VFIT_QA_OUTPUT,'days.png'),fullPage:true});
- await page.locator('#routineDays .dayCard').last().click();await page.locator('#uxStartDay').click();if(process.env.VFIT_QA_OUTPUT)await page.screenshot({path:path.join(process.env.VFIT_QA_OUTPUT,'register.png'),fullPage:true});
- const assert=require('node:assert/strict');
+ await page.locator('#routineDays .dayCard').last().click();
+ await page.locator('#uxMore-day').click();await page.getByRole('button',{name:'Personalizar esta rutina',exact:true}).click();
+ const editor=page.locator('#editorOverlay .uxRoutineEditor');assert(await editor.isVisible());
+ assert.equal((await editor.locator(':scope > button').last().textContent()).trim(),'Cerrar');
+ assert(await editor.getByRole('button',{name:'Quitar ejercicio',exact:true}).first().evaluate(el=>el.classList.contains('uxDanger')));
+ await editor.getByRole('button',{name:'Cerrar',exact:true}).click();
+ await page.locator('#uxStartDay').click();if(process.env.VFIT_QA_OUTPUT)await page.screenshot({path:path.join(process.env.VFIT_QA_OUTPUT,'register.png'),fullPage:true});
  assert(await page.locator('#setRows').isVisible());assert(!await page.locator('#workoutClock').isVisible());
+ assert.equal(await page.locator('#setRows [data-k=kg]').first().getAttribute('aria-label'),'Serie 1: Peso en kilogramos');
  await page.locator('#uxMore-register').click();assert(await page.locator('#workoutClock').isVisible());
  await page.locator('#uxMore-register').click();
  await page.locator('#setRows [data-k=kg]').first().fill('20');await page.locator('#setRows [data-k=reps]').first().fill('10');await page.locator('#setRows [data-k=done]').first().check();
+ assert(await page.locator('#setRows .setRow').first().evaluate(el=>el.classList.contains('uxSetDone')));
  await page.locator('#vfitSessionPause').click();assert.equal(await page.locator('#vfitSessionPause').textContent(),'Continuar');
  await page.locator('#vfitSessionClose').click();assert(await page.locator('#vfitFinishOverlay').isVisible());
  await page.getByRole('button',{name:'Seguir entrenando',exact:true}).click();
  for(const width of [320,390,768]){await page.setViewportSize({width,height:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`overflow ${width}`);}
  await page.locator('#vfitSessionClose').click();await page.getByRole('button',{name:'Guardar y terminar',exact:true}).click();assert.equal(await page.evaluate(()=>currentWorkout),null);assert.equal(await page.evaluate(()=>progress.history.length),1);
- assert.deepEqual(errors,[]);console.log('Mobile browser PASS: Day 5, series editing, rest, pause, finish dialog, tools, no overflow at 320/390/768px.');await browser.close();server.close();fs.rmSync(build,{recursive:true,force:true});
+ assert.deepEqual(errors,[]);console.log('Mobile browser PASS: routine editor hierarchy, accessible set fields, Day 5, series editing, pause, finish dialog, tools, no overflow at 320/390/768px.');await browser.close();server.close();fs.rmSync(build,{recursive:true,force:true});
 })().catch(e=>{console.error(e);process.exit(1)});

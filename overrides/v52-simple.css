@@ -8,7 +8,7 @@
 .uxMore{display:block;margin:12px 18px;min-height:48px;border:1px solid #2c3d4e;border-radius:14px;background:#101c29;color:#d6e0e9;font-size:13px;font-weight:700;padding:12px 16px;text-align:left}
 .uxMore::after{content:'+';float:right;color:#ffad2e}
 .uxMore[aria-expanded=true]::after{content:'−'}
-button:focus-visible,summary:focus-visible{outline:2px solid #ffad2e;outline-offset:3px}
+button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #ffad2e;outline-offset:3px}
 #home .hero{min-height:0}
 #home .hero img{height:280px;aspect-ratio:auto;object-fit:cover;object-position:center top;background:#080e15}
 #home .heroCopy{padding:16px}
@@ -32,6 +32,8 @@ button:focus-visible,summary:focus-visible{outline:2px solid #ffad2e;outline-off
 #register > .uxMore{order:6}
 #register > .uxOptional{order:7}
 #register > #v26Warmups,#register > #v38Super{order:1}
+#register .setRow{border-radius:11px;padding:2px;transition:background .16s ease,box-shadow .16s ease}
+#register .setRow.uxSetDone{background:rgba(89,227,108,.07);box-shadow:inset 3px 0 0 rgba(89,227,108,.7)}
 #register .setRow input:not([type=checkbox]){min-width:0;font-size:16px;min-height:44px}
 #register .setRow input[type=checkbox]{min-width:24px;min-height:24px}
 #register #v41Prefill p{display:none}
@@ -46,6 +48,17 @@ body:has(#vfitSessionBar:not([hidden])) .screen{padding-bottom:20px}
 .bottomNav button{font-size:11px;min-height:48px}
 #routines .v49ArtNote{display:none}
 #routines .v49Thumb{object-fit:cover}
+#editorOverlay .uxRoutineEditor{padding-bottom:max(20px,env(safe-area-inset-bottom));scroll-padding-bottom:90px}
+#editorOverlay .uxRoutineEditor .uxEditorExercise{margin:10px 0!important;border-radius:16px;padding:12px;background:#0b151f}
+#editorOverlay .uxRoutineEditor .uxEditorExercise>strong{display:block;font-size:14px;line-height:1.35;margin-bottom:10px;color:#fff}
+#editorOverlay .uxRoutineEditor input,#editorOverlay .uxRoutineEditor select{font-size:16px!important;min-height:44px}
+#editorOverlay .uxRoutineEditor .uxAddLabel{display:block;margin:18px 0 7px;color:#cbd4dd;font-size:12px;font-weight:800}
+#editorOverlay .uxRoutineEditor .uxRoutineAddSelect{width:100%;border:1px solid #31465b;border-radius:12px;background:#08111b;color:#fff;padding:10px}
+#editorOverlay .uxRoutineEditor .optionAction.uxEditorAdd{border:0;background:linear-gradient(135deg,#ffad2e,#ff8610);color:#111;font-weight:1000;text-align:center}
+#editorOverlay .uxRoutineEditor .optionAction.uxEditorCustom{border-style:dashed;color:#ffd08b}
+#editorOverlay .uxRoutineEditor .optionAction.uxSecondary{background:#101a25;color:#cbd4dd}
+#editorOverlay .uxRoutineEditor .optionAction.uxDanger{background:transparent;border-color:rgba(255,82,88,.38);color:#ff9a9d;opacity:.82}
+#editorOverlay .uxRoutineEditor .optionAction.uxEditorClose{margin-top:18px;background:#0b141e;color:#aebbc9;text-align:center}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 
 #register #v41Prefill:has(button:disabled){display:none}
