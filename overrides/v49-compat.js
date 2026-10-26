@@ -47,6 +47,7 @@
   const sessionResume=sessionBar.querySelector('#vfitSessionResume');
   const sessionPause=sessionBar.querySelector('#vfitSessionPause');
   const sessionClose=sessionBar.querySelector('#vfitSessionClose');
+  let finishReturnFocus=null;
 
   function refreshSessionBar(){
     const active=!!currentWorkout;
@@ -59,7 +60,14 @@
     sessionPause.setAttribute('aria-label',currentWorkout.runningSince?'Pausar entrenamiento':'Continuar entrenamiento');
   }
 
-  function removeFinishDialog(){document.getElementById('vfitFinishOverlay')?.remove();}
+  function removeFinishDialog(restoreFocus=false){
+    const overlay=document.getElementById('vfitFinishOverlay');
+    if(!overlay)return;
+    overlay.remove();
+    const target=finishReturnFocus;
+    finishReturnFocus=null;
+    if(restoreFocus&&target?.isConnected&&typeof target.focus==='function')target.focus();
+  }
 
   function forceEndWorkout(){
     if(!currentWorkout){removeFinishDialog();refreshSessionBar();return;}
@@ -82,6 +90,7 @@
   function openFinishDialog(){
     if(!currentWorkout)return;
     removeFinishDialog();
+    finishReturnFocus=document.activeElement&&typeof document.activeElement.focus==='function'?document.activeElement:sessionClose;
     const day=currentWorkout.day;
     const hasCompleted=Array.isArray(state?.[day])&&state[day].some(sets=>Array.isArray(sets)&&sets.some(s=>s?.done===true));
     const overlay=document.createElement('div');
@@ -105,10 +114,23 @@
     const discard=document.createElement('button');
     discard.type='button';discard.className='vfitFinishAction danger';discard.textContent='Terminar sin guardar';discard.onclick=forceEndWorkout;
     const cancel=document.createElement('button');
-    cancel.type='button';cancel.className='vfitFinishAction';cancel.textContent='Seguir entrenando';cancel.onclick=removeFinishDialog;
+    cancel.type='button';cancel.className='vfitFinishAction';cancel.textContent='Seguir entrenando';cancel.onclick=()=>removeFinishDialog(true);
     panel.append(save,discard,cancel);overlay.appendChild(panel);document.body.appendChild(overlay);
-    overlay.onclick=e=>{if(e.target===overlay)removeFinishDialog();};
-    discard.focus();
+    overlay.onclick=e=>{if(e.target===overlay)removeFinishDialog(true);};
+    overlay.addEventListener('keydown',e=>{
+      if(e.key==='Escape'){
+        e.preventDefault();
+        removeFinishDialog(true);
+        return;
+      }
+      if(e.key!=='Tab')return;
+      const focusable=[...panel.querySelectorAll('button:not([disabled])')];
+      if(!focusable.length)return;
+      const first=focusable[0],last=focusable[focusable.length-1];
+      if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+      else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+    });
+    cancel.focus();
   }
 
   sessionResume.onclick=()=>{
