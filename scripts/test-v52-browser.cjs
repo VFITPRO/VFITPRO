@@ -19,8 +19,17 @@ const assert=require('node:assert/strict');
   await route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(data)});
  });
  await page.goto(`http://127.0.0.1:${server.address().port}`);await page.locator('#accountEmail').fill('qa@example.com');await page.locator('#accountPassword').fill('test-password');await page.locator('#accountForm button[type=submit]').click();await page.waitForFunction(()=>document.body.classList.contains('account-ready'));
+ await page.waitForFunction(()=>!!window.VFITUniversalArtV53);
+ const visualAudit=await page.evaluate(()=>{
+  const rows=[...exerciseCatalog.entries()].filter(([key])=>!String(key).startsWith('assets/custom-exercise.svg#custom-'));
+  const missing=rows.filter(([,ex])=>!ex?.thumb||!ex?.anatomy).map(([,ex])=>ex?.name||'?');
+  const adduction=rows.find(([,ex])=>ex?.name==='Aducción de cadera en máquina')?.[1];
+  return {total:rows.length,missing,adductionAnatomy:adduction?.anatomy||'',adductionThumb:adduction?.thumb||''};
+ });
+ assert(visualAudit.total>=150);assert.deepEqual(visualAudit.missing,[]);assert(visualAudit.adductionAnatomy.startsWith('data:image/svg+xml')||visualAudit.adductionAnatomy.includes('assets/anatomy/premium/'));assert(visualAudit.adductionThumb.startsWith('data:image/svg+xml')||visualAudit.adductionThumb.includes('assets/exercises/premium/'));
  if(process.env.VFIT_QA_OUTPUT)await page.screenshot({path:path.join(process.env.VFIT_QA_OUTPUT,'home.png'),fullPage:true});
  await page.locator('.bottomNav [data-s=routines]').click();if(process.env.VFIT_QA_OUTPUT)await page.screenshot({path:path.join(process.env.VFIT_QA_OUTPUT,'days.png'),fullPage:true});
+ assert(await page.locator('#uxCreateRoutine').isVisible());assert.equal((await page.locator('#uxCreateRoutine').textContent()).trim(),'+ Crear rutina nueva');
  await page.locator('#routineDays .dayCard').last().click();
  await page.locator('#uxMore-day').click();await page.getByRole('button',{name:'Personalizar esta rutina',exact:true}).click();
  const editor=page.locator('#editorOverlay .uxRoutineEditor');assert(await editor.isVisible());
@@ -39,5 +48,5 @@ const assert=require('node:assert/strict');
  await page.getByRole('button',{name:'Seguir entrenando',exact:true}).click();
  for(const width of [320,390,768]){await page.setViewportSize({width,height:900});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),`overflow ${width}`);}
  await page.locator('#vfitSessionClose').click();await page.getByRole('button',{name:'Guardar y terminar',exact:true}).click();assert.equal(await page.evaluate(()=>currentWorkout),null);assert.equal(await page.evaluate(()=>progress.history.length),1);
- assert.deepEqual(errors,[]);console.log('Mobile browser PASS: routine editor hierarchy, accessible set fields, Day 5, series editing, pause, finish dialog, tools, no overflow at 320/390/768px.');await browser.close();server.close();fs.rmSync(build,{recursive:true,force:true});
+ assert.deepEqual(errors,[]);console.log('Mobile browser PASS: universal art/anatomy coverage, adduction visuals, create-routine CTA, editor hierarchy, accessible set fields, Day 5, pause, finish dialog and no overflow.');await browser.close();server.close();fs.rmSync(build,{recursive:true,force:true});
 })().catch(e=>{console.error(e);process.exit(1)});
