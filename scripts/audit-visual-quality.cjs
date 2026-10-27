@@ -2,8 +2,10 @@ const fs=require('node:fs');
 const path=require('node:path');
 
 const root=path.resolve(__dirname,'..');
+// El contenido principal se renderiza a ~360 px de ancho en móvil.
+// 720 px garantiza al menos 2x de densidad; 1200 px queda como objetivo premium.
 const groups=[
-  {label:'ejercicio',dir:path.join(root,'overrides/assets/exercises/premium'),minW:960,minH:600,recommendedW:1200,recommendedH:750},
+  {label:'ejercicio',dir:path.join(root,'overrides/assets/exercises/premium'),minW:720,minH:600,recommendedW:1200,recommendedH:750},
   {label:'anatomía',dir:path.join(root,'overrides/assets/anatomy/premium'),minW:500,minH:650,recommendedW:700,recommendedH:900}
 ];
 
