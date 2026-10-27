@@ -25,11 +25,15 @@ jobs:
           set -euo pipefail
           node --check overrides/v49-compat.js
           node --check overrides/v52-simple.js
+          node --check overrides/v53-universal-art.js
+          node --check scripts/audit-visual-quality.cjs
           node --check scripts/test-v52.cjs
           node --check scripts/test-v52-browser.cjs
           grep -q "e.key==='Escape'" overrides/v49-compat.js
           grep -q "cancel.focus()" overrides/v49-compat.js
           grep -q "removeFinishDialog(true)" overrides/v49-compat.js
+      - name: Audit premium image resolution
+        run: node scripts/audit-visual-quality.cjs
       - name: Install QA runtime
         run: |
           npm install --no-save jsdom@24.1.3 playwright@1.55.0
