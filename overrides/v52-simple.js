@@ -50,6 +50,58 @@
       });
     });
   }
+
+  // Full-keyboard, hyphen-separated entry. The stored workout model stays numeric per series.
+  function parseBatchValues(raw,count,field) {
+    const value=String(raw||'').trim();
+    if(!value)return null;
+    const tokens=value.replace(/\s+/g,'').replace(/[–—−]/g,'-').split('-');
+    if(tokens.length!==count)throw new Error('Escribe '+count+' valores de '+(field==='kg'?'kilos':'repeticiones')+', uno por serie.');
+    return tokens.map(token=>{
+      const valid=field==='kg'?/^\d{1,4}(?:[.,]\d{1,2})?$/.test(token):/^\d{1,3}$/.test(token);
+      const number=Number(token.replace(',','.'));
+      if(!valid||!Number.isFinite(number)||number<0||number>(field==='kg'?1000:100)||field==='reps'&&!Number.isInteger(number)){
+        throw new Error('Revisa los '+(field==='kg'?'kilos':'repeticiones')+'. Usa números separados por guiones (por ejemplo, 60-60-55).');
+      }
+      return number;
+    });
+  }
+  function enhanceBatchSeriesEntry() {
+    const rows=$('setRows'),sets=state?.[activeDay]?.[activeEx];
+    if(!rows||!Array.isArray(sets)||!sets.length)return;
+    let panel=$('uxBatchSeries');
+    if(!panel){
+      panel=document.createElement('div');
+      panel.id='uxBatchSeries';panel.className='uxBatchSeries';
+      panel.innerHTML='<b>Introducir todas las series</b><p>Usa guiones entre series. Aquí se abre el teclado completo.</p>'+
+        '<label for="uxBatchKg">Kilos por serie</label><input id="uxBatchKg" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="60-60-55">'+
+        '<label for="uxBatchReps">Repeticiones por serie</label><input id="uxBatchReps" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="10-10-8">'+
+        '<button id="uxBatchApply" type="button">Aplicar kilos y repeticiones</button><small id="uxBatchCount"></small>';
+      rows.before(panel);
+      $('uxBatchApply').addEventListener('click',()=>{
+        const current=state?.[activeDay]?.[activeEx];
+        if(!Array.isArray(current)||!current.length)return;
+        const kg=$('uxBatchKg').value,reps=$('uxBatchReps').value;
+        if(!kg.trim()&&!reps.trim()){toast('Escribe kilos o repeticiones separados por guiones');return;}
+        try {
+          const weights=parseBatchValues(kg,current.length,'kg');
+          const repetitions=parseBatchValues(reps,current.length,'reps');
+          current.forEach((set,i)=>{if(weights)set.kg=weights[i];if(repetitions)set.reps=repetitions[i];});
+          persist();renderSets();toast('Valores aplicados a cada serie');
+        } catch(error) {toast(error.message);}
+      });
+    }
+    const kilos=$('uxBatchKg'),reps=$('uxBatchReps'),count=$('uxBatchCount');
+    if(count)count.textContent=sets.length+' series en este ejercicio. Una cifra por serie; después marca ✓ al completarla.';
+    if(document.activeElement!==kilos){
+      kilos.value=sets.some(s=>Number(s.kg)>0)?sets.map(s=>Number(s.kg)||0).join('-'):'';
+      kilos.placeholder=Array.from({length:sets.length},(_,i)=>i===sets.length-1?'55':'60').join('-');
+    }
+    if(document.activeElement!==reps){
+      reps.value=sets.map(s=>Number(s.reps)||0).join('-');
+      reps.placeholder=Array.from({length:sets.length},(_,i)=>i===sets.length-1?'8':'10').join('-');
+    }
+  }
   function updatePrimarySaveLabel() {
     const save=$('register')?.querySelector(':scope > .cta');
     if(!save)return;
@@ -169,7 +221,7 @@
   const nav=document.querySelector('.bottomNav');
   ['home','routines','progress','profile'].forEach(id=>nav.append(nav.querySelector(`[data-s="${id}"]`)));
   const beforeShow=show;show=function(id){const result=beforeShow(id);layout();return result;};
-  const beforeSets=renderSets;renderSets=function(){const result=beforeSets();enhanceRegisterRows();updatePrimarySaveLabel();schedule();return result;};
+  const beforeSets=renderSets;renderSets=function(){const result=beforeSets();enhanceRegisterRows();enhanceBatchSeriesEntry();updatePrimarySaveLabel();schedule();return result;};
   const beforeProgress=renderProgress;renderProgress=function(){const result=beforeProgress();schedule();return result;};
   const beforeDays=renderDays;renderDays=function(){const result=beforeDays();schedule();return result;};
   const beforeRoutineEditor=openRoutineEditor;openRoutineEditor=function(){const result=beforeRoutineEditor();queueMicrotask(decorateRoutineEditorUX);return result;};
@@ -180,5 +232,6 @@
   universal.src='v53-universal-art.js?v=53';universal.async=false;
   universal.onload=()=>{try{window.VFITUniversalArtV53?.refresh?.();layout();}catch(e){console.warn('V53 universal artwork load skipped',e);}};
   document.head.appendChild(universal);
+  if($('setRows')?.children.length)enhanceBatchSeriesEntry();
   layout();
 })();
