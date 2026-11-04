@@ -62,3 +62,13 @@ body:has(#vfitSessionBar:not([hidden])) .screen{padding-bottom:20px}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 
 #register #v41Prefill:has(button:disabled){display:none}
+
+/* Full-keyboard multi-series entry; complements numeric per-series controls. */
+#register .uxBatchSeries{margin:0 0 14px;padding:12px;border:1px solid #365069;border-radius:15px;background:#0b1723}
+#register .uxBatchSeries>b{display:block;font-size:14px;color:#fff;margin-bottom:4px}
+#register .uxBatchSeries p{font-size:12px;line-height:1.45;color:#b5c4d3;margin:0 0 12px}
+#register .uxBatchSeries label{display:block;color:#dce6ef;font-size:12px;font-weight:700;margin:10px 0 5px}
+#register .uxBatchSeries input{display:block;width:100%;min-height:46px;font-size:16px;color:#fff;background:#111f2d;border:1px solid #38516b;border-radius:10px;padding:10px 12px;letter-spacing:.02em}
+#register .uxBatchSeries input::placeholder{color:#8fa5b9}
+#register .uxBatchSeries button{display:block;width:100%;min-height:44px;margin-top:13px;border:0;border-radius:11px;background:linear-gradient(135deg,var(--orange2),var(--orange));font-size:13px;font-weight:900;color:#111}
+#register .uxBatchSeries small{display:block;margin-top:9px;color:#aabac8;font-size:11px;line-height:1.4}
