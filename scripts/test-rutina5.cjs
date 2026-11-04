@@ -71,7 +71,7 @@ const b=boot(saved);
 assert.equal(b.d.querySelector('.serieCount').textContent,'2 / 3 hechas');
 assert.equal(b.d.querySelector('[data-f="kg"]').value,'60-60-55');
 click(b.d.querySelector('#days button:nth-child(2)'));
-assert.equal(b.d.querySelectorAll('.serieDone').length,3);
+assert.equal(b.d.querySelector('.exercise').querySelectorAll('.serieDone').length,3);
 assert.equal(b.d.querySelector('.serieCount').textContent,'0 / 3 hechas');
 b.dom.window.close();
 assert.deepEqual(errors,[]);
