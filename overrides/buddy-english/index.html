@@ -168,7 +168,7 @@ const rateFor=()=>({A1:.8,A2:.88,B1:.95,B2:1,C1:1.05,C2:1.1}[$('lvl').value]*spe
 
 // ---------- Voz del robot ----------
 function speak(text){
-  lastSay=text;setR('speaking');const my=++speakId;
+  lastSay=text;setR('speaking');const my=++speakId;try{recog&&recog.abort();}catch(e){}
   return new Promise(async res=>{
     const done=()=>{if(my===speakId){setR('');}res();};
     if(TTS){try{await TTS.speak(text,{language:'en',rate:Math.min(1.5,Math.max(.7,rateFor()))});return done();}catch(e){}}
@@ -179,7 +179,7 @@ function speak(text){
         const v=speechSynthesis.getVoices().find(v=>/^en[-_]US/i.test(v.lang))||speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang));
         if(v)u.voice=v;
         u.onend=done;u.onerror=done;speechSynthesis.speak(u);
-        setTimeout(done,Math.max(4000,text.length*130));return;
+        setTimeout(done,Math.max(6000,text.length*160));return;
       }catch(e){}
     }
     setTimeout(done,Math.min(3500,text.length*55));
@@ -188,11 +188,14 @@ function speak(text){
 
 // ---------- Micrófono ----------
 let listening=false,recog=null;
+let retried=false;
 function micClick(){
   if(busy)return;
-  try{speechSynthesis.cancel();}catch(e){}
   if(listening){stopListen();return;}
-  listening=true;$('mic').classList.add('on');setR('listening');status('🎧 Te escucho… habla en inglés');
+  try{speechSynthesis.cancel();}catch(e){}
+  try{TTS&&TTS.stop();}catch(e){}
+  listening=true;retried=false;$('txt').value='';
+  $('mic').classList.add('on');setR('listening');status('🎧 Te escucho… habla en inglés');
   if(DICT){
     let got='';
     DICT.onPartial(({text})=>{$('txt').value=text;});
@@ -201,21 +204,34 @@ function micClick(){
     DICT.start().catch(e=>{listening=false;endListenUI();status('No pude abrir el micrófono. Escribe tu respuesta ✍️');});
     return;
   }
-  if(SR){
-    try{
-      recog=new SR();recog.lang='en-US';recog.interimResults=true;recog.maxAlternatives=1;
-      let final='';
-      recog.onresult=e=>{let t='';for(const r of e.results){t+=r[0].transcript;if(r.isFinal)final=t;}$('txt').value=t;};
-      recog.onerror=e=>{listening=false;endListenUI();status(e.error==='not-allowed'?'Permite el micrófono en el navegador, o escribe ✍️':'No te oí bien. Prueba otra vez o escribe ✍️');};
-      recog.onend=()=>{if(listening){listening=false;endListenUI();const t=final||$('txt').value;if(t.trim())submit(t);else status('No te oí. Toca 🎤 otra vez.');}};
-      recog.start();
-    }catch(e){listening=false;endListenUI();status('Escribe tu respuesta ✍️');}
+  if(SR){ setTimeout(startSR,450); } // iOS necesita un momento tras la voz del robot
+}
+function startSR(){
+  if(!listening)return;
+  let final='',gotErr='';
+  try{
+    recog=new SR();recog.lang='en-US';recog.interimResults=true;recog.continuous=false;recog.maxAlternatives=1;
+    recog.onresult=e=>{let t='';for(const r of e.results){t+=r[0].transcript;if(r.isFinal)final=t;}$('txt').value=t;};
+    recog.onerror=e=>{gotErr=e.error||'error';};
+    recog.onend=()=>{
+      recog=null;
+      if(!listening)return;
+      const t=(final||$('txt').value).trim();
+      if(t){listening=false;endListenUI();submit(t);return;}
+      if(gotErr==='not-allowed'||gotErr==='service-not-allowed'){listening=false;endListenUI();status('Permite el micrófono (Ajustes de Safari) o escribe ✍️');return;}
+      if(!retried){retried=true;setTimeout(startSR,350);return;} // un segundo intento automático
+      listening=false;endListenUI();status('No te oí bien'+(gotErr?' ('+gotErr+')':'')+'. Toca 🎤 otra vez o escribe ✍️');
+    };
+    recog.start();
+  }catch(e){
+    if(!retried){retried=true;setTimeout(startSR,400);return;}
+    listening=false;endListenUI();status('No pude abrir el micrófono. Escribe tu respuesta ✍️');
   }
 }
 function endListenUI(){$('mic').classList.remove('on');if(!busy)setR('');}
 async function stopListen(){
   if(DICT){try{await DICT.stop();}catch(e){}}
-  if(recog){try{recog.stop();}catch(e){}}
+  if(recog){try{recog.stop();}catch(e){}if(!DICT)return;}
   if(DICT){listening=false;endListenUI();const t=$('txt').value.trim();if(t)submit(t);}
 }
 
