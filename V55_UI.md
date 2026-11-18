@@ -3,7 +3,7 @@
 Nueva estructura visual inspirada en apps de entrenamiento actuales, conservando el negro y naranja de VFIT PRO.
 Es una capa de presentación (`v55-ui.js`, `v55-ui.css`): no cambia datos, claves ni sincronización.
 
-- **Inicio**: saludo con el nombre de la cuenta, anillo de progreso semanal (sesiones de lunes a domingo frente al
+- **Inicio**: saludo neutro («¡Hola, a entrenar!»), anillo de progreso semanal (sesiones de lunes a domingo frente al
   objetivo semanal, 5 por defecto), tarjeta «Próximo entrenamiento» que abre la sesión y accesos rápidos
   (Rutinas, Biblioteca, Progreso, Perfil). La imagen grande y los contadores salen del inicio; «Plan de hoy y todos
   mis días» sigue disponible plegado.

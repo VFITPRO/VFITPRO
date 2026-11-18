@@ -25,7 +25,7 @@ const assert=require('node:assert/strict');
 
  /* Inicio */
  assert(await page.locator('#uiHome').isVisible());
- assert.equal((await page.locator('#uiHello').textContent()).trim(),'Hola, Víctor 👋');
+ assert.equal((await page.locator('#uiHello').textContent()).trim(),'¡Hola, a entrenar! 👋');
  assert.match(await page.locator('#uiRingTitle').textContent(),/^1 de \d sesiones$/);
  assert(!await page.locator('#home .hero').isVisible());
  assert.match(await page.locator('#uiNextTitle').textContent(),/^Día 1 · /);

@@ -44,8 +44,7 @@
     }));
   }
   function refreshHome() {
-    const name = String(window.VFITAccountBridge?.getProfile?.()?.name || '').trim().split(/\s+/)[0];
-    const hello = $('uiHello'); if (hello) hello.textContent = name ? `Hola, ${name} 👋` : 'Hola 👋';
+    const hello = $('uiHello'); if (hello) hello.textContent = '¡Hola, a entrenar! 👋';
     const w = weekProgress();
     $('uiRingPct').textContent = w.pct + '%';
     $('uiRingBar').setAttribute('stroke-dashoffset', (C * (1 - w.pct / 100)).toFixed(2));
