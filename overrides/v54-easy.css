@@ -1,0 +1,56 @@
+/* V54: registro fácil para cualquier persona. Solo presentación: no cambia datos ni claves. */
+
+/* ---- Guía de tres pasos ---- */
+#register > .easyGuide{order:0!important;margin:0 14px 12px;padding:14px 16px;border:1px solid #8e5516;border-radius:18px;background:linear-gradient(180deg,#171108,#0b1016)}
+#register > .easyGuide[hidden]{display:none!important}
+#register > .easyKeep{display:block!important}
+#register > .easyGuide > b{display:block;font-size:16px;color:#fff;margin-bottom:8px}
+#register > .easyGuide ol{margin:0 0 12px;padding-left:22px;color:#dce6ef;font-size:15px;line-height:1.55}
+#register > .easyGuide li{margin:4px 0}
+#register > .easyGuide strong{color:#ffad2e}
+#register > .easyGuide button{width:100%;min-height:48px;border:0;border-radius:12px;background:linear-gradient(135deg,#ffad2e,#ff8610);color:#111;font-size:15px;font-weight:900}
+
+/* ---- Series: cajas grandes y claras ---- */
+#register .setHead{font-size:12px;color:#c3cfdb}
+#register .setHead,#register .setRow{grid-template-columns:44px 1fr 1fr 1fr 56px;gap:8px}
+body.easyMode #register .setHead,body.easyMode #register .setRow{grid-template-columns:44px 1fr 1fr 56px}
+#register .setRow{margin:10px 0}
+#register .setRow>b{font-size:20px}
+#register .setRow input:not([type=checkbox]){min-height:54px;font-size:22px;font-weight:800;border-radius:14px}
+
+/* Círculo grande para marcar la serie hecha */
+#register .setRow input[type=checkbox]{-webkit-appearance:none;appearance:none;width:52px;height:52px;min-width:52px;min-height:52px;margin:0 auto;padding:0;border-radius:50%;border:3px solid #ffad2e;background-color:#0b141e;cursor:pointer;transition:background-color .15s ease,border-color .15s ease}
+#register .setRow input[type=checkbox]:checked{border-color:#2fcf55;background-color:#2fcf55;background-repeat:no-repeat;background-position:center;background-size:62%;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306210e' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E")}
+
+/* ---- Modo fácil: menos opciones a la vista ---- */
+body.easyMode #register .setHead>div:nth-child(4),
+body.easyMode #register .setRow input[data-k="rir"],
+body.easyMode #register .v28TypeBtn,
+body.easyMode #uxBatchSeries,
+body.easyMode #register .easyPrev .easyRir,
+body.easyMode #register .v37Previous.easyNoPrev{display:none!important}
+
+/* ---- Valores de la última vez: se tocan para usarlos ---- */
+#register .v37Previous{margin:-4px 0 12px;font-size:13px;line-height:1.4}
+#register .v37Previous.easyPrev{margin-left:0;padding:10px 12px;border:1px dashed #3d6384;border-left:1px dashed #3d6384;border-radius:12px;background:#0b1723;color:#d6e0e9;cursor:pointer;min-height:44px;display:flex;align-items:center;flex-wrap:wrap;gap:4px}
+#register .v37Previous.easyPrev u{margin-left:auto;color:#ffad2e;font-weight:800;text-decoration:none}
+#register .v37Previous.easyPrev:active{background:#12263a}
+
+/* ---- Descanso: una sola fila de botones ---- */
+#register .rest .timerBtns{grid-template-columns:repeat(4,1fr);gap:6px}
+#register .rest .timerBtns button{min-height:46px;font-size:13px;padding:8px 2px}
+#register .sets .timerBtns button{min-height:50px;font-size:15px}
+#register > .cta{min-height:58px;font-size:18px}
+
+/* ---- Botones de ayuda y modo ---- */
+#register > .easyExtras{order:8!important;display:grid;gap:8px;margin:14px 14px 24px}
+#register > .easyExtras button{min-height:46px;border:1px solid #2c3d4e;border-radius:12px;background:transparent;color:#aebbc9;font-size:13px;font-weight:700;padding:10px 12px}
+
+/* ---- Aviso «¿las hiciste?» ---- */
+.easyConfirm{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.78);display:grid;place-items:center;padding:22px}
+.easyConfirm[hidden]{display:none}
+.easyConfirmBox{width:min(420px,100%);border:1px solid #31465b;border-radius:22px;background:#0b141e;padding:22px;box-shadow:0 24px 70px rgba(0,0,0,.7)}
+.easyConfirmBox h2{margin:0 0 10px;font-size:20px;line-height:1.25;color:#fff}
+.easyConfirmBox p{margin:0 0 18px;font-size:16px;line-height:1.5;color:#cbd5df}
+.easyConfirmBox button{display:block;width:100%;min-height:54px;margin-top:10px;border-radius:14px;font-size:16px;font-weight:900;border:1px solid #31465b;background:#101c29;color:#fff}
+.easyConfirmBox button.easyYes{border:0;background:linear-gradient(135deg,#ffad2e,#ff8610);color:#111}
