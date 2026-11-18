@@ -1,0 +1,72 @@
+/* V55: interfaz más moderna y ordenada (negro y naranja). Solo presentación. */
+
+/* ---- Tarjetas y fondo ---- */
+.screen .panel,.screen .profileBlock,.screen .progressStat,.screen .dayCard,.screen .exerciseCard{border-color:#1f2f40;background:#0d1721}
+
+/* ---- Barra inferior ---- */
+.bottomNav{background:rgba(7,12,18,.97);border-top:1px solid #1b2a39}
+.bottomNav button{font-size:11px;font-weight:700;color:#8493a3;border-radius:14px}
+.bottomNav button.active{background:rgba(255,143,31,.14);color:#ff9d2e}
+
+/* ---- Inicio ---- */
+#home .hero,#home .stats,#home > .homeHelp{display:none!important}
+#home > .topbar .brand{display:none}
+#home > .topbar .title{flex:1;min-width:0}
+#home .uiGreet h1{margin:0;font-size:26px;line-height:1.15;color:#fff}
+#home .uiGreet p{margin:4px 0 0;font-size:14px;color:#9fb0c1}
+#home > .topbar .iconBtn{border-radius:50%;width:46px;height:46px;border-color:#2a3d50;background:#0d1721;color:#ff9d2e}
+#uiHome{order:1;display:grid;gap:14px;margin:6px 18px 18px}
+.uiCard{border:1px solid #1f2f40;background:#0d1721;border-radius:20px;padding:16px}
+.uiCard h2{margin:0 0 4px;font-size:13px;font-weight:800;letter-spacing:.02em;color:#9fb0c1;text-transform:none}
+.uiRing{display:flex;align-items:center;gap:16px}
+.uiRing svg{flex:0 0 96px;width:96px;height:96px;transform:rotate(-90deg)}
+.uiRing .track{stroke:#1b2a39}
+.uiRing .bar{stroke:#ff9d2e;transition:stroke-dashoffset .5s ease}
+.uiRing .pct{position:absolute;inset:0;display:grid;place-items:center;font-size:22px;font-weight:900;color:#fff}
+.uiRingBox{position:relative;flex:0 0 96px;height:96px}
+.uiRingBox svg{position:absolute;inset:0}
+.uiRingText b{display:block;font-size:20px;color:#fff}
+.uiRingText small{display:block;margin-top:4px;font-size:14px;color:#aebbc9;line-height:1.4}
+.uiNext{display:flex;align-items:center;gap:14px;width:100%;text-align:left;border:1px solid #6b3f12;border-radius:20px;background:linear-gradient(135deg,#1f1409,#0d1721);padding:16px;color:#fff;min-height:84px}
+.uiNext small{display:block;font-size:13px;color:#ffb866;font-weight:800}
+.uiNext b{display:block;margin-top:4px;font-size:18px;line-height:1.25}
+.uiNext .play{margin-left:auto;flex:0 0 52px;height:52px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffad2e,#ff8610);color:#111;font-size:18px}
+#uiHome h3{margin:6px 2px -4px;font-size:16px;color:#fff}
+.uiQuick{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.uiQuick button{display:grid;justify-items:center;gap:6px;min-height:78px;border:1px solid #1f2f40;border-radius:16px;background:#0d1721;color:#d6e0e9;font-size:12px;font-weight:700;padding:12px 4px}
+.uiQuick button span{font-size:22px;line-height:1;color:#ff9d2e}
+
+/* ---- Pestañas tipo «chips» ---- */
+.uxTabs{background:transparent;border:0;padding:0;gap:8px;overflow-x:auto;scrollbar-width:none}
+.uxTabs::-webkit-scrollbar{display:none}
+.uxTabs button{flex:0 0 auto;min-height:42px;padding:9px 18px;border:1px solid #243649;border-radius:999px;background:#0d1721;color:#b3c0cd;font-size:14px}
+.uxTabs button[aria-pressed=true]{background:#ff9d2e;border-color:#ff9d2e;color:#111;box-shadow:none}
+
+/* ---- Rutinas y días ---- */
+#routines .dayCard,#home .dayCard{align-items:center;border-radius:20px;padding:12px}
+#routines .dayCard .thumb,#home .dayCard .thumb{width:72px;height:72px;border-radius:16px;overflow:hidden}
+.dayCard .cardTitle{font-size:17px}
+.dayCard .cardSub{color:#ff9d2e;font-size:13px;font-weight:700}
+.dayCard .cardMeta{color:#aebbc9;font-size:13px}
+
+/* ---- Detalle de rutina ---- */
+#day .dayHero{display:none}
+#day .chips .chip{border-color:#1f2f40;background:#0d1721}
+#day .exerciseCard{border-radius:18px;grid-template-columns:26px 84px minmax(0,1fr) 34px}
+#day .exerciseCard .cardTitle{font-size:15px;overflow-wrap:anywhere}
+#day .exerciseCard .cardSub{overflow-wrap:anywhere}
+#day .exerciseCard .cardMeta{color:#ff9d2e;font-weight:700}
+
+/* ---- Ejercicio ---- */
+#exercise .detailCard{border-color:#1f2f40;background:#0d1721}
+#exercise .panel h2{font-size:18px;color:#fff}
+#exercise .tech .techRow{align-items:flex-start;line-height:1.5;font-size:15px}
+
+/* ---- Progreso ---- */
+#progress .progressStat b{color:#ff9d2e;font-size:26px}
+
+/* ---- Perfil ---- */
+#profile .uiProfileCard{display:flex;align-items:center;gap:14px;margin:0 18px 16px;padding:16px;border:1px solid #1f2f40;border-radius:20px;background:#0d1721}
+#profile .uiAvatar{flex:0 0 58px;height:58px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ffad2e,#ff8610);color:#111;font-size:24px;font-weight:900}
+#profile .uiProfileCard b{display:block;font-size:18px;color:#fff}
+#profile .uiProfileCard small{display:block;margin-top:3px;font-size:14px;color:#9fb0c1;word-break:break-all}

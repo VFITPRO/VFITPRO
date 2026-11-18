@@ -27,11 +27,13 @@ jobs:
           node --check overrides/v52-simple.js
           node --check overrides/v53-universal-art.js
           node --check overrides/v54-easy.js
+          node --check overrides/v55-ui.js
           node --check scripts/audit-visual-quality.cjs
           node --check scripts/test-v52.cjs
           node --check scripts/test-rutina5.cjs
           node --check scripts/test-v52-browser.cjs
           node --check scripts/test-v54-browser.cjs
+          node --check scripts/test-v55-browser.cjs
           grep -q "e.key==='Escape'" overrides/v49-compat.js
           grep -q "cancel.focus()" overrides/v49-compat.js
           grep -q "removeFinishDialog(true)" overrides/v49-compat.js
@@ -51,3 +53,4 @@ jobs:
         run: |
           node scripts/test-v52-browser.cjs
           node scripts/test-v54-browser.cjs
+          node scripts/test-v55-browser.cjs
