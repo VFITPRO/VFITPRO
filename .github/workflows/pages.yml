@@ -40,10 +40,13 @@ jobs:
           node --check public/sw.js
           node --check public/v52-simple.js
           node --check public/v54-easy.js
+          node --check public/v55-ui.js
           grep -q 'v52-simple.js?v=52' public/index.html
           grep -q 'v52-simple.css?v=52' public/index.html
           grep -q 'v54-easy.js?v=54' public/index.html
           grep -q 'v54-easy.css?v=54' public/index.html
+          grep -q 'v55-ui.js?v=55' public/index.html
+          grep -q 'v55-ui.css?v=55' public/index.html
 
           python - <<'PY'
           from pathlib import Path
