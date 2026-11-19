@@ -170,7 +170,8 @@ const rateFor=()=>({A1:.8,A2:.88,B1:.95,B2:1,C1:1.05,C2:1.1}[$('lvl').value]*spe
 function speak(text){
   lastSay=text;setR('speaking');const my=++speakId;
   return new Promise(async res=>{
-    const done=()=>{if(my===speakId){setR('');}res();};
+    let timer=null,fin=false;
+    const done=()=>{if(fin)return;fin=true;clearTimeout(timer);if(my===speakId){setR('');}setTimeout(res,400);};
     if(TTS){try{await TTS.speak(text,{language:'en',rate:Math.min(1.5,Math.max(.7,rateFor()))});return done();}catch(e){}}
     if(window.speechSynthesis){
       try{
@@ -179,7 +180,7 @@ function speak(text){
         const v=speechSynthesis.getVoices().find(v=>/^en[-_]US/i.test(v.lang))||speechSynthesis.getVoices().find(v=>/^en/i.test(v.lang));
         if(v)u.voice=v;
         u.onend=done;u.onerror=done;speechSynthesis.speak(u);
-        setTimeout(done,Math.max(4000,text.length*130));return;
+        timer=setTimeout(()=>{try{speechSynthesis.cancel();}catch(e){}done();},Math.max(6000,text.length*180));return;
       }catch(e){}
     }
     setTimeout(done,Math.min(3500,text.length*55));
@@ -202,14 +203,23 @@ function micClick(){
     return;
   }
   if(SR){
-    try{
-      recog=new SR();recog.lang='en-US';recog.interimResults=true;recog.maxAlternatives=1;
-      let final='';
-      recog.onresult=e=>{let t='';for(const r of e.results){t+=r[0].transcript;if(r.isFinal)final=t;}$('txt').value=t;};
-      recog.onerror=e=>{listening=false;endListenUI();status(e.error==='not-allowed'?'Permite el micrófono en el navegador, o escribe ✍️':'No te oí bien. Prueba otra vez o escribe ✍️');};
-      recog.onend=()=>{if(listening){listening=false;endListenUI();const t=final||$('txt').value;if(t.trim())submit(t);else status('No te oí. Toca 🎤 otra vez.');}};
-      recog.start();
-    }catch(e){listening=false;endListenUI();status('Escribe tu respuesta ✍️');}
+    try{if(recog){recog.onresult=recog.onerror=recog.onend=null;recog.abort();}}catch(e){}
+    recog=null;
+    // iOS: tras la voz del robot el audio tarda un momento en volver al micrófono
+    setTimeout(()=>{
+      if(!listening)return;
+      try{
+        const r=new SR();recog=r;r.lang='en-US';r.interimResults=true;r.continuous=false;r.maxAlternatives=1;
+        let final='',started=false;
+        const watchdog=setTimeout(()=>{if(!started&&recog===r&&listening){try{r.abort();}catch(e){}listening=false;endListenUI();status('No pude activar el micrófono. Toca 🎤 otra vez.');}},4000);
+        r.onstart=()=>{started=true;clearTimeout(watchdog);};
+        r.onresult=e=>{started=true;let t='';for(const x of e.results){t+=x[0].transcript;if(x.isFinal)final=t;}final=final||'';$('txt').value=t;r._last=t;};
+        r.onerror=e=>{clearTimeout(watchdog);if(recog!==r)return;listening=false;endListenUI();
+          status(e.error==='not-allowed'?'Permite el micrófono en el navegador, o escribe ✍️':(e.error==='no-speech'||e.error==='aborted')?'No te oí. Toca 🎤 otra vez.':'No te oí bien. Prueba otra vez o escribe ✍️');};
+        r.onend=()=>{clearTimeout(watchdog);if(recog!==r)return;if(listening){listening=false;endListenUI();const t=final||r._last||$('txt').value;if(t.trim())submit(t);else status('No te oí. Toca 🎤 otra vez.');}};
+        r.start();
+      }catch(e){listening=false;endListenUI();status('Escribe tu respuesta ✍️');}
+    },350);
   }
 }
 function endListenUI(){$('mic').classList.remove('on');if(!busy)setR('');}
