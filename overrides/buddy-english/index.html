@@ -125,11 +125,27 @@ const SCEN = {
     {say:"Interesting. What are your main strengths?",es:"Interesante. ¿Cuáles son tus puntos fuertes?",model:"I am hard-working and I like teamwork.",kw:["strong","hard","team","good","work","responsible","like","am"]},
     {say:"Why do you want this job?",es:"¿Por qué quieres este trabajo?",model:"I want to learn and grow in my career.",kw:["want","learn","grow","because","career","experience","like"]},
     {say:"Do you have any questions for me?",es:"¿Tienes alguna pregunta para mí?",model:"Yes. What are the working hours?",kw:["what","when","how","hours","salary","yes","no"]}]},
-  chat:{name:"💬 Charla libre",ai:"You have a relaxed free conversation about daily life, hobbies, food and travel.",steps:[
+  chat:{name:"💬 Charla libre",endless:true,ai:"You have a relaxed free conversation about daily life, hobbies, food and travel.",steps:[
     {say:"Hi! I'm Buddy. How are you today?",es:"¡Hola! Soy Buddy. ¿Cómo estás hoy?",model:"I'm fine, thank you. And you?",kw:[]},
     {say:"What do you usually do on weekends?",es:"¿Qué sueles hacer los fines de semana?",model:"I usually go to the gym and meet my friends.",kw:[]},
     {say:"That sounds fun! What is your favorite food?",es:"¡Suena divertido! ¿Cuál es tu comida favorita?",model:"My favorite food is pizza.",kw:[]},
-    {say:"Nice! Where would you like to travel next?",es:"¡Genial! ¿A dónde te gustaría viajar?",model:"I would like to travel to Japan.",kw:[]}]}
+    {say:"Where would you like to travel next?",es:"¿A dónde te gustaría viajar?",model:"I would like to travel to Japan.",kw:[]},
+    {say:"What do you do for work?",es:"¿A qué te dedicas?",model:"I work in a restaurant in Valencia.",kw:[]},
+    {say:"What time do you wake up in the morning?",es:"¿A qué hora te despiertas por la mañana?",model:"I wake up at seven o'clock.",kw:[]},
+    {say:"Do you like music? What kind?",es:"¿Te gusta la música? ¿De qué tipo?",model:"Yes, I love Afro House music.",kw:[]},
+    {say:"Tell me about your family.",es:"Háblame de tu familia.",model:"I have a son and he lives in London.",kw:[]},
+    {say:"What is your favorite sport?",es:"¿Cuál es tu deporte favorito?",model:"I like going to the gym and playing tennis.",kw:[]},
+    {say:"What did you do yesterday?",es:"¿Qué hiciste ayer?",model:"Yesterday I worked and then I went to the gym.",kw:[]},
+    {say:"What are your plans for tomorrow?",es:"¿Qué planes tienes para mañana?",model:"Tomorrow I am going to study English.",kw:[]},
+    {say:"How is the weather today in Valencia?",es:"¿Cómo está el tiempo hoy en Valencia?",model:"It is sunny and a little cold.",kw:[]},
+    {say:"What is your dream for the future?",es:"¿Cuál es tu sueño para el futuro?",model:"I want to open my own business.",kw:[]},
+    {say:"What do you like to cook at home?",es:"¿Qué te gusta cocinar en casa?",model:"I like to cook pasta and chicken.",kw:[]},
+    {say:"Do you prefer the beach or the mountains?",es:"¿Prefieres la playa o la montaña?",model:"I prefer the beach because I love the sea.",kw:[]},
+    {say:"What was the best trip of your life?",es:"¿Cuál fue el mejor viaje de tu vida?",model:"My best trip was to Bali.",kw:[]},
+    {say:"What is your favorite movie or series?",es:"¿Cuál es tu película o serie favorita?",model:"My favorite series is a very good drama.",kw:[]},
+    {say:"Why are you learning English?",es:"¿Por qué estás aprendiendo inglés?",model:"I am learning English to travel and to work.",kw:[]},
+    {say:"What do you do to relax?",es:"¿Qué haces para relajarte?",model:"I listen to music and I walk by the sea.",kw:[]},
+    {say:"What is the hardest thing about English for you?",es:"¿Qué es lo más difícil del inglés para ti?",model:"Pronunciation is the hardest thing for me.",kw:[]}]}
 };
 const $=id=>document.getElementById(id);
 const esc=t=>String(t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -213,10 +229,10 @@ function micClick(){
         let final='',started=false;
         const watchdog=setTimeout(()=>{if(!started&&recog===r&&listening){try{r.abort();}catch(e){}listening=false;endListenUI();status('No pude activar el micrófono. Toca 🎤 otra vez.');}},4000);
         r.onstart=()=>{started=true;clearTimeout(watchdog);};
-        r.onresult=e=>{started=true;let t='';for(const x of e.results){t+=x[0].transcript;if(x.isFinal)final=t;}final=final||'';$('txt').value=t;r._last=t;};
+        r.onresult=e=>{started=true;let t='';for(const x of e.results){t+=x[0].transcript;if(x.isFinal){final=t;r._conf=x[0].confidence;}}final=final||'';$('txt').value=t;r._last=t;};
         r.onerror=e=>{clearTimeout(watchdog);if(recog!==r)return;listening=false;endListenUI();
           status(e.error==='not-allowed'?'Permite el micrófono en el navegador, o escribe ✍️':(e.error==='no-speech'||e.error==='aborted')?'No te oí. Toca 🎤 otra vez.':'No te oí bien. Prueba otra vez o escribe ✍️');};
-        r.onend=()=>{clearTimeout(watchdog);if(recog!==r)return;if(listening){listening=false;endListenUI();const t=final||r._last||$('txt').value;if(t.trim())submit(t);else status('No te oí. Toca 🎤 otra vez.');}};
+        r.onend=()=>{clearTimeout(watchdog);if(recog!==r)return;if(listening){listening=false;endListenUI();const t=final||r._last||$('txt').value;if(t.trim())submit(t,r._conf);else status('No te oí. Toca 🎤 otra vez.');}};
         r.start();
       }catch(e){listening=false;endListenUI();status('Escribe tu respuesta ✍️');}
     },350);
@@ -236,19 +252,22 @@ const PRAISE=["Great job! 🎉","Perfect! 👏","Nice one! ⭐","Very good! 💪
 
 async function begin(){
   S={key:scn.value,i:0,tries:0,hist:[],ai:!!SAMPLE};
+  if(SCEN[S.key].endless){const n=SCEN[S.key].steps.length,r=[...Array(n-1).keys()].map(x=>x+1);for(let j=r.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[r[j],r[k]]=[r[k],r[j]];}S.order=[0,...r];}
   $('setup').classList.add('hide');$('game').classList.remove('hide');$('log').innerHTML='';updateMode();
   if(S.ai) await aiTurn('[START]'); else await guidedAsk();
 }
+const curStep=()=>{const sc=SCEN[S.key];return sc.endless?sc.steps[S.order[S.i%S.order.length]]:sc.steps[S.i];};
 async function guidedAsk(){
-  const st=SCEN[S.key].steps[S.i];
+  const st=curStep();
   bubble('bot',st.say,{es:st.es});
   todo('<span class="say">Tu turno:</span> responde al robot.<small>Puedes decir algo como: «'+st.model+'»</small>');
   busy=true;status('🤖 El robot habla…');await speak(st.say);busy=false;status('Toca 🎤 y responde');
 }
-async function submit(text){
+async function submit(text,conf){
   text=(text||$('txt').value).trim();if(!text||busy)return;$('txt').value='';
   bubble('me',text);
   if(S.ai) return aiTurn(text);
+  if(SCEN[S.key].endless) return chatTurn(text,conf);
   const st=SCEN[S.key].steps[S.i];busy=true;setR('thinking');status('🤖 Pensando…');
   await new Promise(r=>setTimeout(r,500));
   if(hits(text,st.kw)||S.tries>=1){
@@ -270,6 +289,48 @@ async function submit(text){
   bubble('bot',msg,{es:'Casi. Inténtalo otra vez, di: «'+st.model+'»'});
   todo('<span class="say">Repite así:</span> «'+st.model+'»<small>Toca 🎤 y dilo en voz alta.</small>');
   await speak(msg);busy=false;status('Toca 🎤 y dilo otra vez');
+}
+
+// ---------- Charla libre sin fin: solo termina cuando tú pulses «Terminar» ----------
+const ES_WORDS=new Set("yo tu el la los las un una que como esta estoy estas bien muy mal hola gracias quiero me te se mi mis pero porque por para con sin de en es son soy tengo tiene hago hace trabajo vivo vivir gusta gustan mucho poco si no y o a al del lo le les nos nuestro buenos dias noches tardes bueno bueno pues entonces ahora hoy ayer mañana".split(' '));
+const FIXES=[
+  [/\bi am agree\b/i,"I agree"],[/\bi have (\d+) years?( old)?\b/i,"I am $1 years old"],
+  [/\bi no (like|have|want|know|speak|understand)\b/i,"I don't $1"],[/\b(he|she|it) have\b/i,"$1 has"],
+  [/\bmore better\b/i,"better"],[/\bi want go\b/i,"I want to go"],[/\bi very like\b/i,"I really like"],
+  [/\bi like (go|play|eat|travel|cook|run) /i,"I like to $1 "],[/\bmy name are\b/i,"my name is"],[/\bi am go\b/i,"I am going"],
+  [/\bi (am )?live in the\b/i,"I live in the"],[/\bdepend of\b/i,"depend on"]
+];
+function quickFix(t){let o=t,ch=false;for(const[r,x]of FIXES){if(r.test(o)){o=o.replace(r,x);ch=true;}}
+  if(!ch)return '';o=o.trim();return o.charAt(0).toUpperCase()+o.slice(1)+(/[.!?]$/.test(o)?'':'.');}
+function looksSpanish(t){const w=norm(t).split(/\s+/).filter(Boolean);if(!w.length)return false;
+  return w.filter(x=>ES_WORDS.has(x)||/[áéíóúñ]/.test(x)).length/w.length>=.4;}
+const COMMENTS=["Nice! 👏","Good! 💪","I see! ⭐","Cool! 🙂","Great! 🎉","Interesting! 🤔"];
+async function chatTurn(text,conf){
+  busy=true;setR('thinking');status('🤖 Pensando…');
+  await new Promise(r=>setTimeout(r,400));
+  const st=curStep();
+  // 1) Habló en español -> pedirle que lo diga en inglés
+  if(looksSpanish(text)){
+    const msg="Let's try in English! You can say: "+st.model;
+    bubble('bot',msg,{es:'Dilo en inglés, por ejemplo: «'+st.model+'»'});
+    todo('<span class="say">Repite así:</span> «'+esc(st.model)+'»<small>Toca 🎤 y dilo en inglés.</small>');
+    await speak(msg);busy=false;status('Toca 🎤 y responde en inglés');return;
+  }
+  // 2) Pronunciación: si el reconocedor no te entendió bien, repite despacio
+  if(conf>0&&conf<.65&&S.tries<1){
+    S.tries++;
+    const msg="I didn't catch that clearly. Listen and say it again slowly: "+text;
+    bubble('bot',msg,{es:'No te entendí bien. Escucha y repítelo despacio y claro.'});
+    todo('<span class="say">Pronunciación:</span> repite despacio<small>«'+esc(text)+'»</small>');
+    const old=speakRate;speakRate=Math.min(speakRate,.75);await speak(msg);speakRate=old;
+    busy=false;status('Toca 🎤 y repítelo despacio');return;
+  }
+  // 3) Corrección de gramática + siguiente pregunta (nunca se despide)
+  const fix=quickFix(text);S.tries=0;
+  const c=COMMENTS[Math.floor(Math.random()*COMMENTS.length)];
+  if(fix){const m=c+" A more natural way to say it: "+fix;bubble('bot',m,{es:'Forma más natural: '+fix});await speak(m);}
+  else{bubble('bot',c);await speak(c);}
+  S.i++;busy=false;return guidedAsk();
 }
 
 // ---------- Modo IA (si la plataforma lo permite) ----------
