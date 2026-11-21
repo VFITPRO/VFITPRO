@@ -252,11 +252,12 @@ const PRAISE=["Great job! 🎉","Perfect! 👏","Nice one! ⭐","Very good! 💪
 
 async function begin(){
   S={key:scn.value,i:0,tries:0,hist:[],ai:!!SAMPLE};
-  if(SCEN[S.key].endless){const n=SCEN[S.key].steps.length,r=[...Array(n-1).keys()].map(x=>x+1);for(let j=r.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[r[j],r[k]]=[r[k],r[j]];}S.order=[0,...r];}
+  if(SCEN[S.key].endless) S.pool=makePool(true);
   $('setup').classList.add('hide');$('game').classList.remove('hide');$('log').innerHTML='';updateMode();
   if(S.ai) await aiTurn('[START]'); else await guidedAsk();
 }
-const curStep=()=>{const sc=SCEN[S.key];return sc.endless?sc.steps[S.order[S.i%S.order.length]]:sc.steps[S.i];};
+function makePool(first){const st=SCEN.chat.steps,r=st.slice(1);for(let j=r.length-1;j>0;j--){const k=Math.floor(Math.random()*(j+1));[r[j],r[k]]=[r[k],r[j]];}return first?[st[0],...r]:r;}
+const curStep=()=>S.pool?S.pool[S.i%S.pool.length]:SCEN[S.key].steps[S.i];
 async function guidedAsk(){
   const st=curStep();
   bubble('bot',st.say,{es:st.es});
@@ -267,7 +268,7 @@ async function submit(text,conf){
   text=(text||$('txt').value).trim();if(!text||busy)return;$('txt').value='';
   bubble('me',text);
   if(S.ai) return aiTurn(text);
-  if(SCEN[S.key].endless) return chatTurn(text,conf);
+  if(S.pool) return chatTurn(text,conf);
   const st=SCEN[S.key].steps[S.i];busy=true;setR('thinking');status('🤖 Pensando…');
   await new Promise(r=>setTimeout(r,500));
   if(hits(text,st.kw)||S.tries>=1){
@@ -277,10 +278,9 @@ async function submit(text,conf){
     await speak(msg);
     S.i++;S.tries=0;busy=false;
     if(S.i>=SCEN[S.key].steps.length){
-      const end="That was awesome! You finished this practice. See you next time!";
-      bubble('bot',end,{es:'¡Increíble! Terminaste esta práctica. ¡Hasta la próxima!'});
-      todo('✅ <b>¡Práctica completada!</b> Pulsa «Terminar» para elegir otro escenario.');
-      busy=true;await speak(end);busy=false;status('');return;
+      const more="That was awesome! Let's keep talking. Tell me more!";
+      bubble('bot',more,{es:'¡Increíble! Sigamos charlando. Tú decides cuándo terminar con «Terminar».'});
+      S.pool=makePool(false);S.i=0;busy=true;await speak(more);busy=false;return guidedAsk();
     }
     return guidedAsk();
   }
